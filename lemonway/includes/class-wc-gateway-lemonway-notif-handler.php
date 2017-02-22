@@ -50,8 +50,7 @@ class WC_Gateway_Lemonway_Notif_Handler {
 		WC_Gateway_Lemonway::log( 'GET: ' . print_r($_GET, true));
 		WC_Gateway_Lemonway::log( 'POST: ' . print_r($_POST, true));
 		
-		if($this->isGet()){
-			
+		if ($this->isGet()) {
 			wp_redirect(esc_url_raw( $this->gateway->get_return_url( $this->order ))) ;
 			exit;
 		}
@@ -109,7 +108,6 @@ class WC_Gateway_Lemonway_Notif_Handler {
 		return false;
     
 	}
-	
 
 	/**
 	 *

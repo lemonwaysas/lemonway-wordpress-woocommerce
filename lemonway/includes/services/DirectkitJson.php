@@ -64,7 +64,27 @@ final class DirectkitJson{
 		$this->webkitUrl = $webkitUrl;
 		$this->wlLogin = $wlLogin;
 		$this->wlPass = $wlPass;
-		$this->language =substr( $language,0,2);
+
+		$supportedLangs = array(
+            'da' => 'da',
+            'de' => 'ge',
+            'en' => 'en',
+            'es' => 'sp',
+            'fi' => 'fi',
+            'fr' => 'fr',
+            'it' => 'it',
+            'ko' => 'ko',
+            'no' => 'no',
+            'pt' => 'po',
+            'sv' => 'sw'
+        );
+        $language = substr( $language, 0, 2 );
+        if ( array_key_exists( $language, $supportedLangs ) ) {
+            $this->language = $supportedLangs[$language];
+        } else {
+            $this->language = 'en';
+        }
+        
 		$this->pluginType = $pluginType;
 	}
 	
@@ -337,12 +357,10 @@ final class DirectkitJson{
 					throw new DirectkitException($response->d->E->Msg,$response->d->E->Code);
 				}
 				
-				
 				//self::printDirectkitOutput($response);
 					
 				return $response->d;
 			}
-			
 		}
 	}
 	

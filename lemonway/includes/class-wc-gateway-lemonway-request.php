@@ -56,7 +56,6 @@ class WC_Gateway_Lemonway_Request {
 		$returnUrl = '';
 		if (!$useCard) {
 			
-		
 			$params = array(
 				'wkToken' => $order->id,
 				'wallet' => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
@@ -86,7 +85,7 @@ class WC_Gateway_Lemonway_Request {
 			$returnUrl = $this->gateway->getDirectkit()->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL));
 		} else { //Customer want to use his last card, so we call MoneyInWithCardID directly
 		
-			$cardId = get_user_meta(get_current_user_id(),'_lw_card_id',true);
+			$cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
 			
 			//call directkit for MoneyInWithCardId
 			$params = array(
@@ -94,15 +93,15 @@ class WC_Gateway_Lemonway_Request {
 				'wallet' => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
 				'amountTot' => $this->formatAmount($amount),
 				'amountCom' => $this->formatAmount($amountCom),
-				'comment' => $comment . " -- "  .sprintf(__('Oneclic mode (card id: %s)',LEMONWAY_TEXT_DOMAIN), $cardId),
+				'comment' => $comment . " -- "  .sprintf(__('Oneclic mode (card id: %s)', LEMONWAY_TEXT_DOMAIN), $cardId),
 				'cardId' => $cardId
 			);
 			
-			WC_Gateway_Lemonway::log(print_r($params,true));
+			WC_Gateway_Lemonway::log(print_r($params, true));
 			
 			$operation = $this->gateway->getDirectkit()->MoneyInWithCardId($params);
 			
-			WC_Gateway_Lemonway::log(print_r($operation,true));
+			WC_Gateway_Lemonway::log(print_r($operation, true));
 			
 			if($operation->STATUS == "3") {
                 $transaction_id = $operation->ID;
@@ -116,7 +115,7 @@ class WC_Gateway_Lemonway_Request {
                 //Return to original wc success page
 				$returnUrl = $this->gateway->get_return_url($order);
 			} else {
-				throw new Exception(__('Error during payment',LEMONWAY_TEXT_DOMAIN));
+				throw new Exception(__('Error during payment', LEMONWAY_TEXT_DOMAIN));
 			}
 		}
 
