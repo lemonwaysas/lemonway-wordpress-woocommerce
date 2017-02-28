@@ -6,7 +6,7 @@
  Version: 1.0.11
  Author: Kassim Belghait <kassim@sirateck.com>
  Author URI: http://www.sirateck.com
- License: GPL2
+ License: GPL3
  */
 
 if(!defined('ABSPATH')) exit; // Exit if accessed directly
