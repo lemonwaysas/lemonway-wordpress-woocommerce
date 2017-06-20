@@ -11,6 +11,8 @@ A 1 minute integration for the cheapest payment solution in Europe.Accept paymen
 
 == Description ==
 
+[video src="https://youtu.be/9VRTT7QOVrY"]
+
 ### Benefits for the E-merchant 
 
 #### Secured payments :
@@ -41,7 +43,6 @@ A 1 minute integration for the cheapest payment solution in Europe.Accept paymen
 1. Upload the plugin files to the `/wp-content/plugins/lemonway` directory, or install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress
 1. Use the Settings->Plugin Name screen to configure the plugin
-
 
 == Screenshots ==
 
