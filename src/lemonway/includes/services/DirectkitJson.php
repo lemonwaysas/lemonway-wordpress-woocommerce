@@ -150,9 +150,7 @@ final class DirectkitJson
     public function MoneyInWithCardId($params)
     {
         $response = self::sendRequest('MoneyInWithCardId', $params, '1.1');
-
         return new Operation($response->TRANS->HPAY);
-
     }
 
     public function MoneyInIDealInit($params)
