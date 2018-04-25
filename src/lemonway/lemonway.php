@@ -61,9 +61,7 @@ final class Lemonway
      */
     public function add_admin_menu()
     {
-        add_menu_page(__('Lemonway', LEMONWAY_TEXT_DOMAIN), __('Lemonway ', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug, null, null, '58');
-        //add_submenu_page($this->slug, __('Moneyout ', LEMONWAY_TEXT_DOMAIN), __('Moneyout ', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug, array($this, 'moneyout_html'));
-        add_submenu_page($this->slug, __('Configuration ', LEMONWAY_TEXT_DOMAIN), __('Configuration ', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug . 'configuration', array($this, 'redirect_configuration'));
+        add_menu_page(__('Lemon Way for E-commerce', LEMONWAY_TEXT_DOMAIN), __('Lemon Way for E-commerce ', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug . 'configuration', array($this, 'redirect_configuration'));
     }
 
     /**
