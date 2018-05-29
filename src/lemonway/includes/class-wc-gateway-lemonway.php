@@ -92,13 +92,14 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     protected $notifhandler;
 
     //API CONFIGURATION
+    const LEMONWAY_ENVIRONMENT_DEFAULT = 'lwecommerce';
     const API_LOGIN = 'api_login';
     const API_PASSWORD = 'api_password';
     const WALLET_MERCHANT_ID = 'merchant_id';
-    const DIRECTKIT_URL = 'https://ws.lemonway.fr/mb/lwecommerce/prod/directkitjson2/service.asmx';
-    const WEBKIT_URL = 'https://webkit.lemonway.fr/mb/lwecommerce/prod/';
-    const DIRECTKIT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/lwecommerce/dev/directkitjson2/service.asmx';
-    const WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/lwecommerce/dev/';
+    const DIRECTKIT_URL = 'https://ws.lemonway.fr/mb/%s/prod/directkitjson2/service.asmx';
+    const WEBKIT_URL = 'https://webkit.lemonway.fr/mb/%s/prod/';
+    const DIRECTKIT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/%s/dev/directkitjson2/service.asmx';
+    const WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/%s/dev/';
     const IS_TEST_MODE = 'is_test_mode';
 
     //METHOD CONFIGURATION
@@ -107,6 +108,8 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     const DESCRIPTION = 'description';
     const DEBUG = 'debug';
     const CSS_URL = 'css_url';
+    const ENVIRONMENT_NAME = 'environment_name';
+    const CUSTOM_WALLET = 'custom_wallet';
     const ONECLIC_ENABLED = 'oneclic_enabled';
 
     /**
@@ -127,11 +130,12 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         //API informations
         $this->apiLogin = $this->get_option(self::API_LOGIN);
         $this->apiPassword = $this->get_option(self::API_PASSWORD);
-        $this->directkitUrl = self::DIRECTKIT_URL;
-        $this->webkitUrl = self::WEBKIT_URL;
-        $this->directkitUrlTest = self::DIRECTKIT_URL_TEST;
-        $this->webkitUrlTest = self::WEBKIT_URL_TEST;
-
+        $this->directkitUrl = $this->get_option(self::DIRECTKIT_URL);
+        $this->webkitUrl = $this->get_option(self::WEBKIT_URL);
+        $this->directkitUrlTest = $this->get_option(self::DIRECTKIT_URL_TEST);
+        $this->webkitUrlTest =$this->get_option( self::WEBKIT_URL_TEST);
+        $this->environment = $this->get_option(self::ENVIRONMENT_NAME);
+        $this->custom_wallet = $this->get_option(self::CUSTOM_WALLET);
         $this->oneclicEnabled = 'yes' === $this->get_option(self::ONECLIC_ENABLED, 'no');
         $this->testMode = 'yes' === $this->get_option(self::IS_TEST_MODE, 'no');
 
@@ -139,15 +143,6 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $this->title = $this->get_option(self::TITLE);
         $this->description = $this->get_option(self::DESCRIPTION);
         $this->debug = 'yes' === $this->get_option(self::DEBUG, 'no');
-
-        $directkitUrl = $this->testMode ? $this->directkitUrlTest : $this->directkitUrl;
-        $webkitUrl = $this->testMode ? $this->webkitUrlTest : $this->webkitUrl;
-
-        $this->directkit = new DirectkitJson($directkitUrl, $webkitUrl, $this->apiLogin, $this->apiPassword, get_locale());
-        //var_dump('ok:'.$this->apiPassword);
-
-
-        //var_dump($updated_num);
 
         self::$log_enabled = $this->debug;
 
@@ -165,12 +160,48 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     public function process_admin_options()
     {
         parent::process_admin_options();
-
         try {
+            $environment = $this->get_option(self::ENVIRONMENT_NAME);
+            $custom_wallet = $this->get_option(self::CUSTOM_WALLET);
+
+
+
+            // Environment name
+            if (empty($environment)) {
+                // If no custom environment => lwecommerce
+                $env_name = self::LEMONWAY_ENVIRONMENT_DEFAULT;
+            } else {
+                // If custom environment
+                $env_name = $this->environment;
+            }
+            $this->directkitUrl = sprintf(self::DIRECTKIT_URL, $env_name);
+            $this->webkitUrl = sprintf(self::WEBKIT_URL, $env_name);
+            $this->directkitUrlTest = sprintf(self::DIRECTKIT_URL_TEST, $env_name);
+            $this->webkitUrlTest = sprintf(self::WEBKIT_URL_TEST, $env_name);
+
             $directkitUrl = $this->testMode ? $this->directkitUrlTest : $this->directkitUrl;
             $webkitUrl = $this->testMode ? $this->webkitUrlTest : $this->webkitUrl;
+
+
+//            $this->settings["directkit_url"]= $this->directkitUrl;
+//            $this->settings["webkit_url"]=$this->webkitUrl ;
+//            $this->settings["directkit_url_test"]=$this->directkitUrlTest;
+//            $this->settings["webkit_url_test"]= $this->webkitUrlTest;
+
             $this->directkit = new DirectkitJson($directkitUrl, $webkitUrl, $this->get_option(self::API_LOGIN), $this->get_option(self::API_PASSWORD), get_locale());
-            $this->wallet = $this->directkit->GetWalletDetails(array("email" => $this->apiLogin));
+//            WC_Gateway_Lemonway::log(print_r($this->getDirectkit(), true));
+
+            //var_dump($this->webkitUrlTest);
+            if (empty($this->environment)) {
+                // If lwecommerce, get wallet by email
+                $params = array('email' => $this->apiLogin);
+            } else {
+                // If custom env, get custom wallet
+                $params = array('wallet' => $custom_wallet);
+            }
+             //var_dump($params);
+            $this->wallet = $this->directkit->GetWalletDetails($params);
+
             $this->settings["merchant_id"] = $this->wallet->ID;
         } catch (\Exception $e) {
             WC_Admin_Settings::add_error($e->getMessage());

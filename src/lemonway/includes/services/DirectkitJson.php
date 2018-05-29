@@ -140,13 +140,6 @@ final class DirectkitJson
         return new MoneyInWeb($response);
     }
 
-    /*
-    public function RegisterCard($params) {
-        return self::sendRequest('RegisterCard', $params, '1.1');
-    }
-    public function UnregisterCard($params) {
-        return self::sendRequest('UnregisterCard', $params, '1.0');
-    }*/
     public function MoneyInWithCardId($params)
     {
         $response = self::sendRequest('MoneyInWithCardId', $params, '1.1');
@@ -181,10 +174,6 @@ final class DirectkitJson
         return new SofortInit($response);
     }
 
-    /*
-    public function MoneyInValidate($params) {
-        return self::sendRequest('MoneyInValidate', $params, '1.0');
-    }*/
     public function SendPayment($params)
     {
         $response = self::sendRequest('SendPayment', $params, '1.0');
@@ -202,23 +191,6 @@ final class DirectkitJson
         $response = self::sendRequest('RegisterIBAN', $params, '1.1');
         return new Iban($response->IBAN_REGISTER);
     }
-
-    public function MoneyOut($params)
-    {
-        $response = self::sendRequest('MoneyOut', $params, '1.3');
-        return new Operation($response->TRANS->HPAY);
-    }
-    /*
-    public function GetPaymentDetails($params) {
-        $res = self::sendRequest('GetPaymentDetails', $params, '1.0');
-        if (!isset($res->lwError)){
-            $res->operations = array();
-            foreach ($res->lwXml->TRANS->HPAY as $HPAY){
-                $res->operations[] = new Operation($HPAY);
-            }
-        }
-        return $res;
-    }*/
 
     /**
      *
@@ -247,67 +219,6 @@ final class DirectkitJson
         throw new Exception("No Result for getMoneyInTransDetails");
     }
 
-    /*
-    public function GetMoneyOutTransDetails($params) {
-        $res = self::sendRequest('GetMoneyOutTransDetails', $params, '1.4');
-        if (!isset($res->lwError)){
-            $res->operations = array();
-            foreach ($res->lwXml->TRANS->HPAY as $HPAY){
-                $res->operations[] = new Operation($HPAY);
-            }
-        }
-        return $res;
-    }
-    public function UploadFile($params) {
-        $res = self::sendRequest('UploadFile', $params, '1.1');
-        if (!isset($res->lwError)){
-            $res->kycDoc = new KycDoc($res->lwXml->UPLOAD);
-        }
-        return $res;
-    }
-    public function GetKycStatus($params) {
-        return self::sendRequest('GetKycStatus', $params, '1.5');
-    }
-    public function GetMoneyInIBANDetails($params) {
-        return self::sendRequest('GetMoneyInIBANDetails', $params, '1.4');
-    }
-    public function RefundMoneyIn($params) {
-        return self::sendRequest('RefundMoneyIn', $params, '1.2');
-    }
-    public function GetBalances($params) {
-        return self::sendRequest('GetBalances', $params, '1.0');
-    }
-    public function MoneyIn3DAuthenticate($params) {
-        return self::sendRequest('MoneyIn3DAuthenticate', $params, '1.0');
-    }
-    public function MoneyInIDealInit($params) {
-        return self::sendRequest('MoneyInIDealInit', $params, '1.0');
-    }
-    public function MoneyInIDealConfirm($params) {
-        return self::sendRequest('MoneyInIDealConfirm', $params, '1.0');
-    }
-    public function RegisterSddMandate($params) {
-        $res = self::sendRequest('RegisterSddMandate', $params, '1.0');
-        if (!isset($res->lwError)){
-            $res->sddMandate = new SddMandate($res->lwXml->SDDMANDATE);
-        }
-        return $res;
-    }
-    public function UnregisterSddMandate($params) {
-        return self::sendRequest('UnregisterSddMandate', $params, '1.0');
-    }
-    public function MoneyInSddInit($params) {
-        return self::sendRequest('MoneyInSddInit', $params, '1.0');
-    }
-    public function GetMoneyInSdd($params) {
-        return self::sendRequest('GetMoneyInSdd', $params, '1.0');
-    }
-    public function GetMoneyInChequeDetails($params) {
-        return self::sendRequest('GetMoneyInChequeDetails', $params, '1.4');
-    }
-    */
-
-
     private function sendRequest($methodName, $params, $version)
     {
         $ua = '';
@@ -332,7 +243,7 @@ final class DirectkitJson
         $requestParams = array('p' => $requestParams);
 
         WC_Gateway_Lemonway::log(print_r($requestParams, true));
-        //self::printDirectkitInput($requestParams);
+
 
         $headers = array(
             "Content-type: application/json; charset=utf-8",
@@ -343,6 +254,7 @@ final class DirectkitJson
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->directkitUrl . $methodName);
+        WC_Gateway_Lemonway::log($this->directkitUrl . $methodName);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -351,11 +263,9 @@ final class DirectkitJson
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestParams));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
         $response = curl_exec($ch);
-
-        //WC_Gateway_Lemonway::log(print_r($requestParams, true));
-
+        WC_Gateway_Lemonway::log("response");
+        WC_Gateway_Lemonway::log($response);
         if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
 

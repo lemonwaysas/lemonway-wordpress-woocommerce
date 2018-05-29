@@ -83,5 +83,23 @@ return array(
         'label' => __('Enable logging', 'woocommerce'),
         'default' => 'no',
         'description' => sprintf(__('Log Lemonway events, such as notification requests, inside <code>%s</code>', LEMONWAY_TEXT_DOMAIN), wc_get_log_file_path('lemonway'))
+    ),
+    'Advanced_configuration' => array(
+        'title' => __('Advanced Configuration for LW Enterprise', LEMONWAY_TEXT_DOMAIN),
+        'type' => 'title',
+        'description' => ''
+    ),
+    WC_Gateway_Lemonway::ENVIRONMENT_NAME => array(
+        'title' => __('Custom environment name', 'woocommerce'),
+        'type' => 'text',
+        'desc_tip' => true,
+        'placeholder' => __('Optional', 'woocommerce')
+    ),
+    WC_Gateway_Lemonway::CUSTOM_WALLET => array(
+        'title' => __('Technical wallet name', 'woocommerce'),
+        'type' => 'text',
+        'desc_tip' => true,
+        'placeholder' => __('Optional', 'woocommerce')
     )
+
 );

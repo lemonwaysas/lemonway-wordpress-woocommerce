@@ -53,6 +53,7 @@ class WC_Gateway_Lemonway_Notif_Handler
         WC_Gateway_Lemonway::log('Found order in notif handler #' . $this->order->id);
         WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
         WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
+
         if ($this->isGet()) {
             $total = number_format((float)$this->order->total, 2, '.', '');
             $this->doublecheckAmount($total);
@@ -66,7 +67,7 @@ class WC_Gateway_Lemonway_Notif_Handler
             if ($response_code == "0000") {
                 do_action('valid-lemonway-notif-request', $this->order);
             } else {
-                $this->order->set_status(wc_clean( $_POST['status'] ), '', true);
+                $this->order->set_status(wc_clean($_POST['status']), '', true);
             }
         } else {
             wp_die('Lemonway notification Request Failure', 'Lemonway Notification', array('response' => 500));
@@ -132,10 +133,15 @@ class WC_Gateway_Lemonway_Notif_Handler
 
             //Call api to get transaction detail for this order
             try {
-                $operation = $this->gateway->getDirectkit()->GetMoneyInTransDetails($params);
+                $testMode = 'yes' === $this->gateway->get_option(WC_Gateway_Lemonway::IS_TEST_MODE, 'no');
+
+                $directkitUrl = $testMode ? "directkit_url_test" : "directkit_url";
+                $webkitUrl = $testMode ? "webkit_url_test" : "webkit_url";
+
+                $this->directkit = new DirectkitJson($this->gateway->get_option($directkitUrl), $this->gateway->get_option($webkitUrl), $this->gateway->get_option(WC_Gateway_Lemonway::API_LOGIN), $this->gateway->get_option(WC_Gateway_Lemonway::API_PASSWORD), get_locale());
+                $operation = $this->directkit->GetMoneyInTransDetails($params);
             } catch (Exception $e) {
                 WC_Gateway_Lemonway::log($e->getMessage());
-                throw $e;
             }
             $this->_moneyin_trans_details = $operation;
         }
