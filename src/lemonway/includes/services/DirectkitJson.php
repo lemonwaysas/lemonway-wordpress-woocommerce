@@ -98,7 +98,7 @@ final class DirectkitJson
     {
         $response = self::sendRequest('MoneyInWithCardId', $params);
     
-        return new Operation($response->TRANS->HPAY);
+        return $response->TRANS->HPAY;
     }
 
     public function MoneyInIDealInit($params)
@@ -107,12 +107,6 @@ final class DirectkitJson
         return new IdealInit($response);
     }
 
-    /**
-     *
-     * @param array $params
-     * @return Operation
-     * @throws Exception
-     */
     public function MoneyInIDealConfirm($transactionId)
     {
         $params = array(
@@ -120,7 +114,7 @@ final class DirectkitJson
         );
         
         $response = self::sendRequest('MoneyInIDealConfirm', $params);
-        return new Operation($response->TRANS->HPAY);
+        return $response->TRANS->HPAY;
     }
 
     public function MoneyInSofortInit($params)
@@ -129,20 +123,14 @@ final class DirectkitJson
         return new SofortInit($response);
     }
     
-    /**
-     *
-     * @param array $params
-     * @return Operation
-     * @throws Exception
-     */
     public function GetMoneyInTransDetails($params)
     {
         $response = self::sendRequest('GetMoneyInTransDetails', $params);
 
         foreach ($response->TRANS->HPAY as $HPAY) {
-            return new Operation($HPAY);
+            return $HPAY;
         }
-        
+
         throw new Exception("No Result for getMoneyInTransDetails");
     }
     

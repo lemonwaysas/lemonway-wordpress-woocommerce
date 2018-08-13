@@ -16,10 +16,6 @@ class WC_Gateway_Lemonway_Notif_Handler
      */
     protected $gateway;
 
-    /**
-     *
-     * @var Operation
-     */
     protected $_moneyin_trans_details = null;
 
     /**
@@ -103,7 +99,6 @@ class WC_Gateway_Lemonway_Notif_Handler
             return false;
         }
 
-        /* @var $operation Operation */
         $operation = $this->GetMoneyInTransDetails();
 
         if ($operation) {
@@ -121,10 +116,6 @@ class WC_Gateway_Lemonway_Notif_Handler
         return false;
     }
 
-    /**
-     *
-     * @return boolean|Operation
-     */
     protected function GetMoneyInTransDetails()
     {
         if (is_null($this->_moneyin_trans_details)) {
