@@ -1,6 +1,4 @@
 <?php
-require_once 'models/IdealInit.php';
-require_once 'models/SofortInit.php';
 require_once 'DirectkitException.php';
 
 final class DirectkitJson
@@ -102,7 +100,7 @@ final class DirectkitJson
     public function MoneyInIDealInit($params)
     {
         $response =  self::sendRequest('MoneyInIDealInit', $params);
-        return new IdealInit($response);
+        return $response->IDEALINIT;
     }
 
     public function MoneyInIDealConfirm($transactionId)
@@ -118,7 +116,7 @@ final class DirectkitJson
     public function MoneyInSofortInit($params)
     {
         $response =  self::sendRequest('MoneyInSofortInit', $params);
-        return new SofortInit($response);
+        return $response->SOFORTINIT;
     }
     
     public function GetMoneyInTransDetails($params)
