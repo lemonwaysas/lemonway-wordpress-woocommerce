@@ -34,7 +34,6 @@ class WC_Gateway_Lemonway_Request
      */
     public function get_request_url($order)
     {
-
         $registerCard = $useRegisteredCard = 0;
         $useCard = 0;
         if (isset($_POST['oneclic'])) {
@@ -57,7 +56,6 @@ class WC_Gateway_Lemonway_Request
         $comment = sprintf(__('Order #%s by %s %s %s', LEMONWAY_TEXT_DOMAIN), $order->get_order_number(), $order->billing_last_name, $order->billing_first_name, $order->billing_email);
         $returnUrl = '';
         if (!$useCard) {
-
             $params = array(
                 'wkToken' => $order->id,
                 'wallet' => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
@@ -91,7 +89,6 @@ class WC_Gateway_Lemonway_Request
             }
 
             $returnUrl = $this->directkit->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL));
-
         } else { //Customer want to use his last card, so we call MoneyInWithCardID directly
 
             $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);

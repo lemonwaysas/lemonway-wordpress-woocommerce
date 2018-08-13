@@ -1,9 +1,5 @@
 <?php
 
-class LwModel {
-
-	
-
-	
+class LwModel
+{
 }
-

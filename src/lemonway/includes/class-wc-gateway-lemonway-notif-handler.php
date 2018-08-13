@@ -179,7 +179,6 @@ class WC_Gateway_Lemonway_Notif_Handler
      */
     protected function payment_status_completed($order)
     {
-
         if ($order->has_status('completed')) {
             WC_Gateway_Lemonway::log('Aborting, Order #' . $order->id . ' is already complete.');
             exit;
@@ -187,6 +186,5 @@ class WC_Gateway_Lemonway_Notif_Handler
         if (empty($_POST['response_transactionId']) && !$order->has_status('processing')) {
             $this->payment_complete($order, (wc_clean($_POST['response_transactionId'])), __('Notification payment completed', LEMONWAY_TEXT_DOMAIN));
         }
-
     }
 }

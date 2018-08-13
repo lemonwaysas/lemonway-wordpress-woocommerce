@@ -1,4 +1,4 @@
 <?php
-class DirectkitException extends Exception{
-	
+class DirectkitException extends Exception
+{
 }
