@@ -1,6 +1,4 @@
 <?php
-require_once 'models/Operation.php';
-require_once 'models/Wallet.php';
 require_once 'models/IdealInit.php';
 require_once 'models/SofortInit.php';
 require_once 'DirectkitException.php';
@@ -80,7 +78,7 @@ final class DirectkitJson
     {
         $response = self::sendRequest('GetWalletDetails', $params);
         
-        return new Wallet($response->WALLET);
+        return $response->WALLET;
     }
 
     /**

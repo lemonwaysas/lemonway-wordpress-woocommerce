@@ -114,12 +114,6 @@ final class Lemonway
         wp_redirect(admin_url('admin.php?page=wc-settings&tab=checkout&section=wc_gateway_lemonway'), 301);
     }
     
-    /**
-     *
-     * @param string $walletId
-     * @throws Exception
-     * @return Wallet
-     */
     public function getWalletDetails($walletId)
     {
         $kit = $this->gateway->getDirectkit();
