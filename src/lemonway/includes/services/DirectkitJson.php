@@ -1,6 +1,4 @@
 <?php
-require_once 'models/LwError.php';
-require_once 'models/LwModel.php';
 require_once 'models/Operation.php';
 require_once 'models/Wallet.php';
 require_once 'models/MoneyInWeb.php';
@@ -10,8 +8,6 @@ require_once 'DirectkitException.php';
 
 final class DirectkitJson
 {
-    
-
     /**
      *
      * @var string $directkitUrl
@@ -83,7 +79,7 @@ final class DirectkitJson
 
     public function GetWalletDetails($params)
     {
-        $response = self::sendRequest('GetWalletDetails', $params, '1.5');
+        $response = self::sendRequest('GetWalletDetails', $params);
         
         return new Wallet($response->WALLET);
     }
@@ -95,20 +91,20 @@ final class DirectkitJson
      */
     public function MoneyInWebInit($params)
     {
-        $response =  self::sendRequest('MoneyInWebInit', $params, '1.3');
+        $response =  self::sendRequest('MoneyInWebInit', $params);
         return new MoneyInWeb($response);
     }
 
     public function MoneyInWithCardId($params)
     {
-        $response = self::sendRequest('MoneyInWithCardId', $params, '1.1');
+        $response = self::sendRequest('MoneyInWithCardId', $params);
     
         return new Operation($response->TRANS->HPAY);
     }
 
     public function MoneyInIDealInit($params)
     {
-        $response =  self::sendRequest('MoneyInIDealInit', $params, '1.0');
+        $response =  self::sendRequest('MoneyInIDealInit', $params);
         return new IdealInit($response);
     }
 
@@ -124,13 +120,13 @@ final class DirectkitJson
             'transactionId'=> $transactionId
         );
         
-        $response = self::sendRequest('MoneyInIDealConfirm', $params, '1.0');
+        $response = self::sendRequest('MoneyInIDealConfirm', $params);
         return new Operation($response->TRANS->HPAY);
     }
 
     public function MoneyInSofortInit($params)
     {
-        $response =  self::sendRequest('MoneyInSofortInit', $params, '1.0');
+        $response =  self::sendRequest('MoneyInSofortInit', $params);
         return new SofortInit($response);
     }
     
@@ -142,7 +138,7 @@ final class DirectkitJson
      */
     public function GetMoneyInTransDetails($params)
     {
-        $response = self::sendRequest('GetMoneyInTransDetails', $params, '1.8');
+        $response = self::sendRequest('GetMoneyInTransDetails', $params);
 
         foreach ($response->TRANS->HPAY as $HPAY) {
             return new Operation($HPAY);
@@ -151,7 +147,7 @@ final class DirectkitJson
         throw new Exception("No Result for getMoneyInTransDetails");
     }
     
-    private function sendRequest($methodName, $params, $version)
+    private function sendRequest($methodName, $params)
     {
         $ua = '';
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -168,7 +164,7 @@ final class DirectkitJson
                 'wlLogin'  => $this->wlLogin,
                 'wlPass'   => $this->wlPass,
                 'language' => $this->language,
-                'version'  => $version,
+                'version'  => "10.0",
                 'walletIp' => $ip,
                 'walletUa' => $ua,
         );
