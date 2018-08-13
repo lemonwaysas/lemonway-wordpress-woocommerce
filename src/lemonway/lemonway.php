@@ -136,17 +136,15 @@ final class Lemonway {
  			if ($amountToPay > $wallet->BAL) {
  				$message = sprintf(__("You can't paid amount upper of your balance amount: %s", LEMONWAY_TEXT_DOMAIN), wc_price($wallet->BAL));
  				echo '<div id="message" class="error notice-error is-dismissible"><p>' . $message . '</p></div>';
- 			}
- 			elseif ($amountToPay <= 0) {
+ 			} elseif ($amountToPay <= 0) {
  				$message = __("Amount must be greater than 0", LEMONWAY_TEXT_DOMAIN);
  				echo '<div id="message" class="error notice-error is-dismissible"><p>' . esc_html( $message ) . '</p></div>'; 
- 			}
- 			else
+ 			} else
  			{
  		
  				$ibanId = 0;
  		
- 				if( isset( $_POST['iban_id'] ) && is_array( $_POST['iban_id'] ) && check_admin_referer( 'moneyout_' . $walletId ) ) {
+ 				if ( isset( $_POST['iban_id'] ) && is_array( $_POST['iban_id'] ) && check_admin_referer( 'moneyout_' . $walletId ) ) {
  					$ibanId = current( wc_clean( $_POST['iban_id'] ) );
  					$iban = wc_clean( $_POST['iban_' . $ibanId] );
  					 
