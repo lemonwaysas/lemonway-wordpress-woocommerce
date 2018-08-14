@@ -152,6 +152,8 @@ final class DirectkitJson
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         
+        $url = $this->directkitUrl . $methodName;
+
         $baseParams = array(
                 'wlLogin'  => $this->wlLogin,
                 'wlPass'   => $this->wlPass,
@@ -163,7 +165,6 @@ final class DirectkitJson
         
         $requestParams = array_merge($baseParams, $params);
         $requestParams = array('p' => $requestParams);
-        //self::printDirectkitInput($requestParams);
                         
         $headers = array(
             "Content-type: application/json; charset=utf-8",
@@ -173,7 +174,7 @@ final class DirectkitJson
         );
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->directkitUrl . $methodName);
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -184,6 +185,10 @@ final class DirectkitJson
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $response = curl_exec($ch);
+
+        // Log
+        $requestParams["p"]["wlPass"] = "*masked*";
+        WC_Gateway_Lemonway::log("Lemon Way: " . $url . " - Request: " . json_encode($requestParams) . " - Response: " . $response);
 
         if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
@@ -201,9 +206,7 @@ final class DirectkitJson
                 if (isset($response->d->E)) {
                     throw new DirectkitException($response->d->E->Msg, $response->d->E->Code);
                 }
-                
-                //self::printDirectkitOutput($response);
-                    
+                 
                 return $response->d;
             }
         }
