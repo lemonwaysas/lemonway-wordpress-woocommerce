@@ -33,13 +33,7 @@ final class DirectkitJson
      */
     private $language;
     
-    /**
-     * Information about used plugin E.g: Prestashop-1.6.4 or Magento-1.9.3 ...
-     * @var string $pluginType
-     */
-    private $pluginType;
-    
-    public function __construct($directkitUrl, $webkitUrl, $wlLogin, $wlPass, $language, $pluginType = 'Generic-1.0.0')
+    public function __construct($directkitUrl, $webkitUrl, $wlLogin, $wlPass, $language)
     {
         
         //@TODO validate args
@@ -68,8 +62,6 @@ final class DirectkitJson
         } else {
             $this->language = 'en';
         }
-        
-        $this->pluginType = $pluginType;
     }
 
     public function GetWalletDetails($params)
@@ -130,15 +122,32 @@ final class DirectkitJson
         throw new Exception("No Result for getMoneyInTransDetails");
     }
     
+    // IP of end-user
+    private function getUserIP() {
+        if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
+            $ip = $_SERVER["HTTP_CLIENT_IP"];
+        }
+        elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        }
+        elseif (!empty($_SERVER["REMOTE_ADDR"])) {
+            $ip = $_SERVER["REMOTE_ADDR"];
+        } else {
+            $ip = "";
+        }
+
+        return $ip;
+    }
+
     private function sendRequest($methodName, $params)
     {
-        $ua = '';
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
+        $ua = "";
+        if (isset($_SERVER["HTTP_USER_AGENT"])) {
+            $ua = $_SERVER["HTTP_USER_AGENT"];
         }
-        $ua = $this->pluginType."/" . $ua;
+        $ua = "Woocommerce/" . $ua;
             
-        $ip = '';
+        $ip = $this->getUserIP();;
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
