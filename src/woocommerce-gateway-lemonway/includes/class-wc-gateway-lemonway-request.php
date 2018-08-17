@@ -34,14 +34,14 @@ class WC_Gateway_Lemonway_Request
      */
     public function get_request_url($order)
     {
-        $registerCard = $useRegisteredCard = 0;
+        $registerCard = 0;
         $useCard = 0;
         if (isset($_POST['oneclic'])) {
             $oneclic = wc_clean($_POST['oneclic']);
 
             switch ($oneclic) {
                 case 'register_card':
-                    $registerCard = $useRegisteredCard = 1;
+                    $registerCard = 1;
                     break;
                 case 'use_card':
                     $useCard = 1;
@@ -51,38 +51,28 @@ class WC_Gateway_Lemonway_Request
 
         //Build args with the order
         $amount = $order->get_total();
-        $amountCom = "0.00";
 
-        $comment = sprintf(__('Order #%s by %s %s %s', LEMONWAY_TEXT_DOMAIN), $order->get_order_number(), $order->billing_last_name, $order->billing_first_name, $order->billing_email);
+        $comment = "Woocommerce " . sprintf(__('Order #%s by %s %s %s', LEMONWAY_TEXT_DOMAIN), $order->get_order_number(), $order->billing_last_name, $order->billing_first_name, $order->billing_email);
         $returnUrl = '';
+
         if (!$useCard) {
             $params = array(
-                'wkToken' => $order->id,
-                'wallet' => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
-                'amountTot' => $this->formatAmount($amount),
-                'amountCom' => $this->formatAmount($amountCom),
-                'comment' => $comment,
-                'returnUrl' => $this->notify_url,//esc_url_raw( $this->gateway->get_return_url( $order )),
-                'cancelUrl' => esc_url_raw($order->get_cancel_order_url_raw()),
-                'errorUrl' => esc_url_raw($order->get_cancel_order_url_raw()), //@TODO change for a specific error url
-                'registerCard' => $registerCard, //For Atos
-                'useRegisteredCard' => $useRegisteredCard, //For payline
+                "wkToken" => $order->id,
+                "wallet" => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
+                "amountTot" => $this->formatAmount($amount),
+                "amountCom" => "0.00",
+                "comment" => $comment,
+                "returnUrl" => $this->notify_url,//esc_url_raw( $this->gateway->get_return_url( $order )),
+                "cancelUrl" => esc_url_raw($order->get_cancel_order_url_raw()),
+                "errorUrl" => esc_url_raw($order->get_cancel_order_url_raw()), //@TODO change for a specific error url
+                "registerCard" => $registerCard
             );
-            WC_Gateway_Lemonway::log('okkkkkkkkkkkkkkkkk');
-            $testMode = 'yes' === $this->gateway->get_option(WC_Gateway_Lemonway::IS_TEST_MODE, 'no');
-
-            $directkitUrl = $testMode ? "directkit_url_test" : "directkit_url";
-            $webkitUrl = $testMode ? "webkit_url_test" : "webkit_url";
-
-            $this->directkit = new DirectkitJson($this->gateway->get_option($directkitUrl), $this->gateway->get_option($webkitUrl), $this->gateway->get_option(WC_Gateway_Lemonway::API_LOGIN), $this->gateway->get_option(WC_Gateway_Lemonway::API_PASSWORD), get_locale());
-            WC_Gateway_Lemonway::log(print_r($this->directkit, true));
-
 
             //Call APi MoneyInWebInit in correct MODE with the args
-            $moneyInWeb = $this->directkit->MoneyInWebInit($params);
+            $moneyInWeb = $this->gateway->getDirectkit()->MoneyInWebInit($params);
 
             //Save card ID
-            if ($registerCard || $useRegisteredCard) {
+            if ($registerCard) {
                 update_user_meta(get_current_user_id(), '_lw_card_id', $moneyInWeb->CARD->ID);
                 update_post_meta($order->id, '_register_card', true);
                 WC_Gateway_Lemonway::log(sprintf(__("Card Saved for customer Id %s", LEMONWAY_TEXT_DOMAIN), get_current_user_id()));
@@ -90,24 +80,19 @@ class WC_Gateway_Lemonway_Request
 
             $returnUrl = $this->directkit->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL));
         } else { //Customer want to use his last card, so we call MoneyInWithCardID directly
-
             $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
 
             //call directkit for MoneyInWithCardId
             $params = array(
-                'wkToken' => $order->id,
-                'wallet' => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
-                'amountTot' => $this->formatAmount($amount),
-                'amountCom' => $this->formatAmount($amountCom),
-                'comment' => $comment . " -- " . sprintf(__('Oneclic mode (card id: %s)', LEMONWAY_TEXT_DOMAIN), $cardId),
-                'cardId' => $cardId
+                "wkToken" => $order->id,
+                "wallet" => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
+                "amountTot" => $this->formatAmount($amount),
+                "amountCom" => "0.00",
+                "comment" => $comment . " - " . sprintf(__("Oneclic mode (card id: %s)", LEMONWAY_TEXT_DOMAIN), $cardId),
+                "cardId" => $cardId
             );
 
-            WC_Gateway_Lemonway::log(print_r($params, true));
-
             $operation = $this->directkit->MoneyInWithCardId($params);
-
-            WC_Gateway_Lemonway::log(print_r($operation, true));
 
             if ($operation->STATUS == "3") {
                 $transaction_id = $operation->ID;
@@ -120,7 +105,7 @@ class WC_Gateway_Lemonway_Request
                 //Return to original wc success page
                 $returnUrl = $this->gateway->get_return_url($order);
             } else {
-                throw new Exception(__('Error during payment', LEMONWAY_TEXT_DOMAIN));
+                throw new Exception(__("Error during payment", LEMONWAY_TEXT_DOMAIN));
             }
         }
         //Return redirect url

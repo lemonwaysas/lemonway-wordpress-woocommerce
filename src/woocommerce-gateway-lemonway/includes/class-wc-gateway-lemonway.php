@@ -12,10 +12,6 @@ include_once('class-wc-gateway-lemonway-notif-handler.php');
  */
 class WC_Gateway_Lemonway extends WC_Payment_Gateway
 {
-    
-    /** @var bool Whether or not logging is enabled */
-    public static $log_enabled = false;
-    
     /** @var WC_Logger Logger instance */
     public static $log = false;
     
@@ -73,11 +69,6 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     protected $isTestMode;
     
-    /**
-     *
-     * @var bool $debug
-     */
-    protected $debug;
     
     /**
      *
@@ -105,7 +96,6 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     const ENABLED = 'enabled';
     const TITLE = 'title';
     const DESCRIPTION = 'description';
-    const DEBUG = 'debug';
     const CSS_URL = 'css_url';
     const ONECLIC_ENABLED = 'oneclic_enabled';
     
@@ -114,10 +104,10 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     public function __construct()
     {
-        $this->id                 = 'lemonway';
+        $this->id                 = 'woocommerce-gateway-lemonway';
         $this->icon 			  = ''; //@TODO
         $this->has_fields         = true;
-        $this->method_title       = __('Lemon Way for E-commerce', LEMONWAY_TEXT_DOMAIN);
+        $this->method_title       = __('LemonWay', LEMONWAY_TEXT_DOMAIN);
         $this->method_description = __('Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.', LEMONWAY_TEXT_DOMAIN);
 
         // Load the settings.
@@ -140,14 +130,11 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         // Define user set variables.
         $this->title          = $this->get_option(self::TITLE);
         $this->description    = $this->get_option(self::DESCRIPTION);
-        $this->debug          = 'yes' === $this->get_option(self::DEBUG, 'no');
         
         $directkitUrl = $this->testMode ? $this->directkitUrlTest : $this->directkitUrl;
         $webkitUrl = $this->testMode ? $this->webkitUrlTest : $this->webkitUrl;
         
         $this->directkit = new DirectkitJson($directkitUrl, $webkitUrl, $this->apiLogin, $this->apiPassword, get_locale());
-    
-        self::$log_enabled = $this->debug;
     
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ));
 
@@ -202,7 +189,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $cardNum = get_user_meta(get_current_user_id(), '_lw_card_num', true);
         //$cardExp = get_user_meta(get_current_user_id(),'_lw_card_exp',true);
         
-        if (!empty($cardId) && !empty($cardNum)) {
+        if (!empty($cardId)) {
             $oneclic_fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
 				<label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclic" />'
@@ -267,12 +254,10 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     public static function log($message)
     {
-        if (self::$log_enabled) {
-            if (empty(self::$log)) {
-                self::$log = new WC_Logger();
-            }
-            self::$log->add('lemonway', $message);
+        if (empty(self::$log)) {
+            self::$log = new WC_Logger();
         }
+        self::$log->add('woocommerce-gateway-lemonway', $message);
     }
     
     /**

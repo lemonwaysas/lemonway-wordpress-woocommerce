@@ -5,7 +5,7 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Settings for Lemonway Gateway.
+ * Settings for Lemonway Payment Gateway.
  */
 return array(
     'api_configuration' => array(
@@ -14,7 +14,7 @@ return array(
         'description' => ''
     ),
     WC_Gateway_Lemonway::API_LOGIN => array(
-        'title'       => __('Login Lemon Way for E-commerce', LEMONWAY_TEXT_DOMAIN),
+        'title'       => __("Login", LEMONWAY_TEXT_DOMAIN),
         'type'        => 'text',
         'description' => '',
         'default'     => '',
@@ -22,7 +22,7 @@ return array(
         'placeholder' => ''
     ),
     WC_Gateway_Lemonway::API_PASSWORD => array(
-        'title'       => __('Password Lemon Way for E-commerce', LEMONWAY_TEXT_DOMAIN),
+        'title'       => __("Password", LEMONWAY_TEXT_DOMAIN),
         'type'        => 'password',
         'description' => '',
         'default'     => '',
@@ -84,12 +84,5 @@ return array(
         'label'   	  => __('Enable Oneclic', LEMONWAY_TEXT_DOMAIN),
         'default'     => 'no',
         'desc_tip'    => true
-    ),
-    WC_Gateway_Lemonway::DEBUG => array(
-        'title'       => __('Debug Log', 'woocommerce'),
-        'type'        => 'checkbox',
-        'label'       => __('Enable logging', 'woocommerce'),
-        'default'     => 'no',
-        'description' => sprintf(__('Log Lemonway events, such as notification requests, inside <code>%s</code>', LEMONWAY_TEXT_DOMAIN), wc_get_log_file_path('lemonway'))
     )
 );

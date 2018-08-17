@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Handles responses from Lemonway Notification.
+ * Handles responses from LemonWay Notification.
  */
 class WC_Gateway_Lemonway_Notif_Handler
 {
@@ -39,32 +39,20 @@ class WC_Gateway_Lemonway_Notif_Handler
      */
     public function check_response()
     {
-        WC_Gateway_Lemonway::log("okkk");
-        WC_Gateway_Lemonway::log($this->isPost() ? "Is POST request" : "Is GET Request");
         $orderId = $this->isGet() ? wc_clean($_GET['response_wkToken']) : wc_clean($_POST['response_wkToken']);
+
         $this->order = wc_get_order($orderId);
         if (!$this->order) {
             wp_die('Lemonway notification Request Failure. No Order Found!', 'Lemonway Notification', array('response' => 500));
         }
         WC_Gateway_Lemonway::log('Found order in notif handler #' . $this->order->id);
-        WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
-        WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
 
         if ($this->isGet()) {
-            $total = number_format((float)$this->order->total, 2, '.', '');
-            $this->doublecheckAmount($total);
-            WC_Gateway_Lemonway::log('order : ' . $this->order);
-            WC_Gateway_Lemonway::log('lien de redirection : ' . print_r($this->gateway->get_return_url($this->order), true));
+            WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
             wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
+        } elseif ($this->isPost() && $this->validate_notif(wc_clean($_POST['response_code']))) {
+            WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
             do_action('valid-lemonway-notif-request', $this->order);
-        } elseif (!empty($_POST) && $this->validate_notif(wc_clean($_POST['response_code']))) {
-            //$posted = wp_unslash( $_POST );
-            $response_code = $this->postValue('response_code');
-            if ($response_code == "0000") {
-                do_action('valid-lemonway-notif-request', $this->order);
-            } else {
-                $this->order->set_status(wc_clean($_POST['status']), '', true);
-            }
         } else {
             wp_die('Lemonway notification Request Failure', 'Lemonway Notification', array('response' => 500));
         }
@@ -91,7 +79,7 @@ class WC_Gateway_Lemonway_Notif_Handler
     }
 
     /**
-     * Check Lemonway Notification validity.
+     * Check LemonWay Notification validity.
      */
     protected function validate_notif($response_code)
     {
@@ -124,31 +112,15 @@ class WC_Gateway_Lemonway_Notif_Handler
 
             //Call api to get transaction detail for this order
             try {
-                $testMode = 'yes' === $this->gateway->get_option(WC_Gateway_Lemonway::IS_TEST_MODE, 'no');
-
-                $directkitUrl = $testMode ? "directkit_url_test" : "directkit_url";
-                $webkitUrl = $testMode ? "webkit_url_test" : "webkit_url";
-
-                $this->directkit = new DirectkitJson($this->gateway->get_option($directkitUrl), $this->gateway->get_option($webkitUrl), $this->gateway->get_option(WC_Gateway_Lemonway::API_LOGIN), $this->gateway->get_option(WC_Gateway_Lemonway::API_PASSWORD), get_locale());
-                $operation = $this->directkit->GetMoneyInTransDetails($params);
+                $operation = $this->gateway->getDirectkit()->GetMoneyInTransDetails($params);
             } catch (Exception $e) {
                 WC_Gateway_Lemonway::log($e->getMessage());
             }
+
             $this->_moneyin_trans_details = $operation;
         }
-        return $this->_moneyin_trans_details;
-    }
 
-    /*
-   Double check
-   */
-    private function doublecheckAmount($amount)
-    {
-        $details = $this->getMoneyInTransDetails();
-        // CREDIT + COMMISSION
-        $realAmountDoublecheck = $details->CRED + $details->COM;
-        // Status 3 means success
-        return (($details->STATUS == '3') && ($amount == $realAmountDoublecheck));
+        return $this->_moneyin_trans_details;
     }
 
     /**
@@ -161,7 +133,6 @@ class WC_Gateway_Lemonway_Notif_Handler
     {
         $order->add_order_note($note);
         $order->payment_complete($txn_id);
-//        WC_Gateway_Lemonway::log('order 3 : ' . print_r($order, true));
     }
 
     /**

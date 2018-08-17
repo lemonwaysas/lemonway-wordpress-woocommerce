@@ -37,8 +37,7 @@ final class DirectkitJson
     {
         
         //@TODO validate args
-        
-        $this->directkitUrl = $directkitUrl . "/";
+        $this->directkitUrl = $directkitUrl;
         $this->webkitUrl = $webkitUrl;
         $this->wlLogin = $wlLogin;
         $this->wlPass = $wlPass;
@@ -71,11 +70,6 @@ final class DirectkitJson
         return $response->WALLET;
     }
 
-    /**
-     *
-     * @param array $params
-     * @return MoneyInWeb
-     */
     public function MoneyInWebInit($params)
     {
         $response =  self::sendRequest('MoneyInWebInit', $params);
@@ -152,7 +146,7 @@ final class DirectkitJson
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         
-        $url = $this->directkitUrl . $methodName;
+        $url = $this->directkitUrl . "/" . $methodName;
 
         $baseParams = array(
                 'wlLogin'  => $this->wlLogin,
@@ -188,7 +182,7 @@ final class DirectkitJson
 
         // Log
         $requestParams["p"]["wlPass"] = "*masked*";
-        WC_Gateway_Lemonway::log("Lemon Way: " . $url . " - Request: " . json_encode($requestParams) . " - Response: " . $response);
+        WC_Gateway_Lemonway::log("LemonWay: " . $url . " - Request: " . json_encode($requestParams) . " - Response: " . $response);
 
         if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
@@ -226,14 +220,14 @@ final class DirectkitJson
                 throw new Exception("Bad Request : The server cannot or will not process the request due to something that is perceived to be a client error", 400);
                 break;
             case 403:
-                throw new Exception("IP is not allowed to access Lemon Way's API, please contact support@lemonway.fr", 403);
+                throw new Exception("IP is not allowed to access LemonWay's API, please contact support@lemonway.fr", 403);
                 break;
             case 404:
                 throw new Exception("Check that the access URLs are correct. If yes, please contact support@lemonway.fr", 404);
                 print "Check that the access URLs are correct. If yes, please contact support@lemonway.fr";
                 break;
             case 500:
-                throw new Exception("Lemon Way internal server error, please contact support@lemonway.fr", 500);
+                throw new Exception("LemonWay internal server error, please contact support@lemonway.fr", 500);
                 break;
             default:
                 throw  new Exception(sprintf("HTTP CODE %d IS NOT SUPPORTED", $responseCode), $responseCode);
