@@ -2,7 +2,6 @@
 
 class WC_Gateway_Lemonway_Request
 {
-
     /**
      * Pointer to gateway making the request.
      * @var WC_Gateway_Lemonway
@@ -62,7 +61,7 @@ class WC_Gateway_Lemonway_Request
                 "amountTot" => $this->formatAmount($amount),
                 "amountCom" => "0.00",
                 "comment" => $comment,
-                "returnUrl" => $this->notify_url,//esc_url_raw( $this->gateway->get_return_url( $order )),
+                "returnUrl" => $this->notify_url,
                 "cancelUrl" => esc_url_raw($order->get_cancel_order_url_raw()),
                 "errorUrl" => esc_url_raw($order->get_cancel_order_url_raw()), //@TODO change for a specific error url
                 "registerCard" => $registerCard
@@ -78,7 +77,7 @@ class WC_Gateway_Lemonway_Request
                 WC_Gateway_Lemonway::log(sprintf(__("Card Saved for customer Id %s", LEMONWAY_TEXT_DOMAIN), get_current_user_id()));
             }
 
-            $returnUrl = $this->directkit->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL));
+            $returnUrl = $this->gateway->getDirectkit()->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL));
         } else { //Customer want to use his last card, so we call MoneyInWithCardID directly
             $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
 
@@ -92,7 +91,7 @@ class WC_Gateway_Lemonway_Request
                 "cardId" => $cardId
             );
 
-            $operation = $this->directkit->MoneyInWithCardId($params);
+            $operation = $this->gateway->getDirectkit()->MoneyInWithCardId($params);
 
             if ($operation->STATUS == "3") {
                 $transaction_id = $operation->ID;

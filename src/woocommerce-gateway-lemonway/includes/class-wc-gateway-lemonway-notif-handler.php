@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
  */
 class WC_Gateway_Lemonway_Notif_Handler
 {
-
     /**
      * Pointer to gateway making the request.
      * @var WC_Gateway_Lemonway
@@ -45,10 +44,10 @@ class WC_Gateway_Lemonway_Notif_Handler
         if (!$this->order) {
             wp_die('Lemonway notification Request Failure. No Order Found!', 'Lemonway Notification', array('response' => 500));
         }
-        WC_Gateway_Lemonway::log('Found order in notif handler #' . $this->order->id);
 
         if ($this->isGet()) {
             WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
+            do_action('valid-lemonway-notif-request', $this->order);
             wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
         } elseif ($this->isPost() && $this->validate_notif(wc_clean($_POST['response_code']))) {
             WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
@@ -145,7 +144,8 @@ class WC_Gateway_Lemonway_Notif_Handler
             WC_Gateway_Lemonway::log('Aborting, Order #' . $order->id . ' is already complete.');
             exit;
         }
-        if (empty($_POST['response_transactionId']) && !$order->has_status('processing')) {
+
+        if (( !empty($_GET['response_wkToken']) || !empty($_POST['response_transactionId'])) && !$order->has_status('processing')) {
             $this->payment_complete($order, (wc_clean($_POST['response_transactionId'])), __('Notification payment completed', LEMONWAY_TEXT_DOMAIN));
         }
     }
