@@ -47,6 +47,7 @@ class WC_Gateway_Lemonway_Notif_Handler
 
         if ($this->isGet()) {
             WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
+
             do_action('valid-lemonway-notif-request', $this->order);
             wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
         } elseif ($this->isPost() && $this->validate_notif(wc_clean($_POST['response_code']))) {
@@ -86,21 +87,7 @@ class WC_Gateway_Lemonway_Notif_Handler
             return false;
         }
 
-        $operation = $this->GetMoneyInTransDetails();
-
-        if ($operation) {
-            if ($operation->STATUS == 3) {
-                //Save Card Data if is register case
-                $registerCard = get_post_meta($this->order->id, '_register_card', true);
-                if ($registerCard) {
-                    update_user_meta($this->order->get_user_id(), '_lw_card_type', $operation->EXTRA->TYP);
-                    update_user_meta($this->order->get_user_id(), '_lw_card_num', $operation->EXTRA->NUM);
-                    update_user_meta($this->order->get_user_id(), '_lw_card_exp', $operation->EXTRA->EXP);
-                }
-                return true;
-            }
-        }
-        return false;
+        return $this->doubleCheck();
     }
 
     protected function GetMoneyInTransDetails()
@@ -120,6 +107,38 @@ class WC_Gateway_Lemonway_Notif_Handler
         }
 
         return $this->_moneyin_trans_details;
+    }
+
+    /*
+     *Double check
+    */
+    private function doubleCheck()
+    {
+        $ret = false;
+
+        $operation = $this->GetMoneyInTransDetails();
+
+        // Status 3 means success
+        if ($operation && ($operation->STATUS == 3)) {
+            // CREDIT + COMMISSION
+            $realAmount = $operation->CRED + $operation->COM;
+
+            $amount = number_format((float)$this->order->total, 2, '.', '');
+
+            if ($amount == $realAmount) {
+                //Save Card Data if is register case
+                $registerCard = get_post_meta($this->order->id, '_register_card', true);
+                if ($registerCard) {
+                    update_user_meta($this->order->get_user_id(), '_lw_card_type', $operation->EXTRA->TYP);
+                    update_user_meta($this->order->get_user_id(), '_lw_card_num', $operation->EXTRA->NUM);
+                    update_user_meta($this->order->get_user_id(), '_lw_card_exp', $operation->EXTRA->EXP);
+                }
+
+                $ret = true;
+            }
+        }
+
+        return $ret;
     }
 
     /**

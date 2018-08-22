@@ -113,7 +113,7 @@ final class DirectkitJson
             return $HPAY;
         }
 
-        throw new Exception("No Result for getMoneyInTransDetails");
+        throw new Exception("No Result for GetMoneyInTransDetails");
     }
     
     // IP of end-user
