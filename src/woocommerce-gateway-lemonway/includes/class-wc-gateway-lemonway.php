@@ -59,9 +59,9 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     
     /**
      *
-     * @var bool $oneclicEnabled
+     * @var bool $oneclickEnabled
      */
-    protected $oneclicEnabled;
+    protected $oneclickEnabled;
     
     /**
      *
@@ -97,7 +97,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     const TITLE = 'title';
     const DESCRIPTION = 'description';
     const CSS_URL = 'css_url';
-    const ONECLIC_ENABLED = 'oneclic_enabled';
+    const ONECLICK_ENABLED = 'oneclick_enabled';
     
     /**
      * Constructor for the gateway.
@@ -124,7 +124,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $this->directkitUrlTest = self::DIRECTKIT_URL_TEST;
         $this->webkitUrlTest = self::WEBKIT_URL_TEST;
 
-        $this->oneclicEnabled = 'yes' === $this->get_option(self::ONECLIC_ENABLED, 'no');
+        $this->oneclickEnabled = 'yes' === $this->get_option(self::ONECLICK_ENABLED, 'no');
         $this->testMode       = 'yes' === $this->get_option(self::IS_TEST_MODE, 'no');
         
         // Define user set variables.
@@ -156,8 +156,8 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     public function payment_fields()
     {
-        if ($this->oneclicEnabled) {
-            $this->oneclic_form();
+        if ($this->oneclickEnabled) {
+            $this->oneclick_form();
         } else {
             if ($description = $this->get_description()) {
                 echo wpautop(wptexturize(esc_html($description)));
@@ -171,16 +171,16 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     }
     
     /**
-     * Oneclic form.
+     * One-click form.
      *
      * @param  array $args
      * @param  array $fields
      */
-    public function oneclic_form($args = array(), $fields = array())
+    public function oneclick_form($args = array(), $fields = array())
     {
-        $oneclic_fields = array(
+        $oneclick_fields = array(
                 'register_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="oneclic" />'
+				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="oneclick" />'
                 . __('Save your card data for a next buy.', LEMONWAY_TEXT_DOMAIN) . '</label>
 			</p>'
         );
@@ -190,33 +190,33 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         //$cardExp = get_user_meta(get_current_user_id(),'_lw_card_exp',true);
         
         if (!empty($cardId)) {
-            $oneclic_fields = array(
+            $oneclick_fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclic" />'
+				<label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclick" />'
                     . sprintf(__('Use my recorded card: %s', LEMONWAY_TEXT_DOMAIN), $cardNum) . '</label>
 				
 			</p>',
             'register_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-radio" value="register_card" type="radio" name="oneclic" />'
+				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-radio" value="register_card" type="radio" name="oneclick" />'
                     . __('Save new card data.', LEMONWAY_TEXT_DOMAIN) .'</label>
 				
 			</p>',
             'no_use_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_no_use_card"><input id="' . esc_attr($this->id) . '_no_use_card" class="input-radio"  value="no_use_card" type="radio" name="oneclic" />'
+				<label for="' . esc_attr($this->id) . '_no_use_card"><input id="' . esc_attr($this->id) . '_no_use_card" class="input-radio"  value="no_use_card" type="radio" name="oneclick" />'
                     . __('Not use recorded card data.', LEMONWAY_TEXT_DOMAIN) .'</label>
 				
 			</p>'
             );
         }
     
-        $fields = wp_parse_args($fields, apply_filters('lemonway_oneclic_form_fields', $oneclic_fields, $this->id)); ?>
+        $fields = wp_parse_args($fields, apply_filters('lemonway_oneclick_form_fields', $oneclick_fields, $this->id)); ?>
 			<fieldset id="<?php echo esc_attr($this->id); ?>-oneclic-form">
-				<?php do_action('lemonway_oneclic_form_start', $this->id); ?>
+				<?php do_action('lemonway_oneclick_form_start', $this->id); ?>
 				<?php
                     foreach ($fields as $field) {
                         echo $field;
                     } ?>
-				<?php do_action('lemonway_oneclic_form_end', $this->id); ?>
+				<?php do_action('lemonway_oneclick_form_end', $this->id); ?>
 				<div class="clear"></div>
 			</fieldset>
 			<?php

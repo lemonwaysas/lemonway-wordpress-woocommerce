@@ -15,8 +15,6 @@ if (!defined('ABSPATH')) {
 
 final class Lemonway
 {
-    
-    
     /**
      * @var Lemonway The single instance of the class
      */
@@ -39,7 +37,6 @@ final class Lemonway
      */
     public function __construct()
     {
-     
          // Define constants
         $this->define_constants();
          
@@ -207,8 +204,8 @@ final class Lemonway
      
         $sql = array();
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_oneclic` (
-		    `id_oneclic` int(11) NOT NULL AUTO_INCREMENT,
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_oneclick` (
+		    `id_oneclick` int(11) NOT NULL AUTO_INCREMENT,
 			`id_customer` int(11) NOT NULL,
 			`id_card` int(11) NOT NULL,
 			`card_num` varchar(30) NOT NULL,
@@ -216,7 +213,7 @@ final class Lemonway
 			`card_type` varchar(20) NOT NULL DEFAULT \'\',
 			`date_add` datetime NOT NULL,
 		    `date_upd` datetime NOT NULL,
-		    PRIMARY KEY  (`id_oneclic`)
+		    PRIMARY KEY  (`id_oneclick`)
 		) ENGINE=InnoDB '.$charset_collate.';';
         
         $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_wktoken` (

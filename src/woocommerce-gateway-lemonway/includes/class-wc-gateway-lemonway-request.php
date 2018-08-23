@@ -35,10 +35,10 @@ class WC_Gateway_Lemonway_Request
     {
         $registerCard = 0;
         $useCard = 0;
-        if (isset($_POST['oneclic'])) {
-            $oneclic = wc_clean($_POST['oneclic']);
+        if (isset($_POST['oneclick'])) {
+            $oneclick = wc_clean($_POST['oneclick']);
 
-            switch ($oneclic) {
+            switch ($oneclick) {
                 case 'register_card':
                     $registerCard = 1;
                     break;
@@ -87,7 +87,7 @@ class WC_Gateway_Lemonway_Request
                 "wallet" => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
                 "amountTot" => $this->formatAmount($amount),
                 "amountCom" => "0.00",
-                "comment" => $comment . " - " . sprintf(__("Oneclic mode (card id: %s)", LEMONWAY_TEXT_DOMAIN), $cardId),
+                "comment" => $comment . " - " . sprintf(__("One-click mode (card id: %s)", LEMONWAY_TEXT_DOMAIN), $cardId),
                 "cardId" => $cardId
             );
 

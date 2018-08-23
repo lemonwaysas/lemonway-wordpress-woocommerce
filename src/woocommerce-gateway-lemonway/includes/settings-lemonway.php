@@ -8,81 +8,76 @@ if (! defined('ABSPATH')) {
  * Settings for Lemonway Payment Gateway.
  */
 return array(
-    'api_configuration' => array(
-        'title'       => __('Account configuration', LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'title',
-        'description' => ''
-    ),
-    WC_Gateway_Lemonway::API_LOGIN => array(
-        'title'       => __("Login", LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'text',
-        'description' => '',
-        'default'     => '',
-        'desc_tip'    => true,
-        'placeholder' => ''
-    ),
-    WC_Gateway_Lemonway::API_PASSWORD => array(
-        'title'       => __("Password", LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'password',
-        'description' => '',
-        'default'     => '',
-        'desc_tip'    => true,
-        'placeholder' => ''
-    ),
-    WC_Gateway_Lemonway::WALLET_MERCHANT_ID => array(
-        'title'       => __('Your account name', LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'text',
-        'description' => 'This information has been sent by email',
-        'default'     => '',
-        'desc_tip'    => true,
-        'placeholder' => ''
-    ),
-    WC_Gateway_Lemonway::IS_TEST_MODE => array(
-        'title'       => __('Activate test mode', LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'checkbox',
-        'label'       => __('Activate test mode', LEMONWAY_TEXT_DOMAIN),
-        'default'     => 'no',
-        'description' =>  __('Click to go on Test, let it empty to go on Live', LEMONWAY_TEXT_DOMAIN)
-    ),
-    'payment_configuration' => array(
-        'title'       => __('Payment Configuration', LEMONWAY_TEXT_DOMAIN),
-        'type'        => 'title',
-        'description' => ''
-    ),
     WC_Gateway_Lemonway::ENABLED => array(
         'title'   => __('Enable/Disable', 'woocommerce'),
         'type'    => 'checkbox',
-        'label'   => __('Enable Lemonway payment', LEMONWAY_TEXT_DOMAIN),
-        'default' => 'no'
+        'label'   => __('Enable LemonWay', LEMONWAY_TEXT_DOMAIN),
+        'default' => 'yes'
     ),
     WC_Gateway_Lemonway::TITLE => array(
         'title'       => __('Title', 'woocommerce'),
         'type'        => 'text',
         'description' => __('This controls the title which the user sees during checkout.', 'woocommerce'),
-        'default'     => __('Credit Card', LEMONWAY_TEXT_DOMAIN),
-        'desc_tip'    => true
+        'desc_tip'    => true,
+        'placeholder' => __('Credit Card', LEMONWAY_TEXT_DOMAIN),
+        'default'     => __('Credit Card', LEMONWAY_TEXT_DOMAIN)
     ),
     WC_Gateway_Lemonway::DESCRIPTION => array(
         'title'       => __('Description', 'woocommerce'),
         'type'        => 'text',
+        'description' => __("Payment method description that the customer will see on your checkout.", "woocommerce"),
         'desc_tip'    => true,
-        'description' => __('This controls the description which the user sees during checkout.', 'woocommerce'),
-        'default'     => __('You will be redirect to payment page after you submit order.', LEMONWAY_TEXT_DOMAIN)
+        'default'     => __('You will be redirected to payment page after submitting order.', LEMONWAY_TEXT_DOMAIN),
+        'placeholder' => __('You will be redirected to payment page after submitting order.', LEMONWAY_TEXT_DOMAIN)
+    ),
+    'account_settings' => array(
+        'title'       =>  "<hr /><span class='dashicons dashicons-admin-users'></span> " . __('Account Settings', LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'title',
+    ),
+    WC_Gateway_Lemonway::API_LOGIN => array(
+        'title'       => __("Login", LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'text',
+        'description' => "<a href='https://www.lemonway.com/ecommerce/' target='_blank'>" . __("Create an account", LEMONWAY_TEXT_DOMAIN) . "</a>",
+        'placeholder' => get_option('admin_email'),
+        'default' => get_option('admin_email')
+    ),
+    WC_Gateway_Lemonway::API_PASSWORD => array(
+        'title'       => __("Password", LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'password',
+        'placeholder' => __("Password", LEMONWAY_TEXT_DOMAIN),
+        'description' => "<a href='" . __("https://ecommerce.lemonway.com/en/seller/lost-password", LEMONWAY_TEXT_DOMAIN) . "' target='_blank'>" . __("Forgotten password?", LEMONWAY_TEXT_DOMAIN) . "</a>"
+    ),
+    WC_Gateway_Lemonway::WALLET_MERCHANT_ID => array(
+        'title'       => __('Your account name', LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'text',
+        'description' => 'This information has been sent by email',
+        'desc_tip'    => true,
+    ),
+    WC_Gateway_Lemonway::IS_TEST_MODE => array(
+        'title'       => __('Test mode', LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'checkbox',
+        'label'       => __('Enable test mode', LEMONWAY_TEXT_DOMAIN),
+        'description' =>  "<a href='" . __("https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-", LEMONWAY_TEXT_DOMAIN) . "' target='_blank'>Click here to see how to use Test mode</a>",
+        'default'     => 'no'
+    ),
+    'payment_configuration' => array(
+        'title'       => "<hr /><span class='dashicons dashicons-admin-settings'></span> " . __('Advanced Settings', LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'title'
     ),
     WC_Gateway_Lemonway::CSS_URL => array(
-        'title'       => __('Css url', 'woocommerce'),
+        'title'       => __('CSS URL', LEMONWAY_TEXT_DOMAIN),
         'type'        => 'text',
-        'description' => __('Optionally enter the url of the page style you wish to use.', LEMONWAY_TEXT_DOMAIN),
-        'default'     => 'https://webkit.lemonway.fr/css/mercanet/mercanet_lw_custom.css',
+        'description' => __("Customise the stylesheet of the payment page (Notice: If your website is in https, the CSS URL has to be in https too)", LEMONWAY_TEXT_DOMAIN),
         'desc_tip'    => true,
-        'placeholder' => __('Optional', 'woocommerce')
+        'placeholder' => "https://webkit.lemonway.fr/css/mercanet/mercanet_lw_custom.css",
+        'default'     => "https://webkit.lemonway.fr/css/mercanet/mercanet_lw_custom.css"
     ),
-    WC_Gateway_Lemonway::ONECLIC_ENABLED => array(
-        'title'       => __('Enable Oneclic', LEMONWAY_TEXT_DOMAIN),
+    WC_Gateway_Lemonway::ONECLICK_ENABLED => array(
+        'title'       => __('One-click', LEMONWAY_TEXT_DOMAIN),
         'type'        => 'checkbox',
-        'description' => __('Display checkbox for allow customer to save his credit card.', LEMONWAY_TEXT_DOMAIN),
-        'label'   	  => __('Enable Oneclic', LEMONWAY_TEXT_DOMAIN),
-        'default'     => 'no',
-        'desc_tip'    => true
+        'label'       => __('Enable One-click', LEMONWAY_TEXT_DOMAIN),
+        'description' => __('Display One-click form when check out.', LEMONWAY_TEXT_DOMAIN),
+        'desc_tip'    => true,
+        'default'     => 'no'
     )
 );
