@@ -76,14 +76,14 @@ class WC_Gateway_Lemonway_Request
 
             //Save card ID
             if ($registerCard) {
-                update_user_meta(get_current_user_id(), '_lw_card_id', $moneyInWeb->CARD->ID);
+                update_user_meta(get_current_user_id(), 'lw_card_id', $moneyInWeb->CARD->ID);
                 update_post_meta($order->id, '_register_card', true);
                 WC_Gateway_Lemonway::log(sprintf(__("Card Saved for customer Id %s", LEMONWAY_TEXT_DOMAIN), get_current_user_id()));
             }
 
             $returnUrl = $this->gateway->getDirectkit()->formatMoneyInUrl($moneyInWeb->TOKEN, $this->gateway->get_option(WC_Gateway_Lemonway::CSS_URL), $this->gateway->get_option(WC_Gateway_Lemonway::TPL_NAME));
         } else { //Customer want to use his last card, so we call MoneyInWithCardID directly
-            $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
+            $cardId = get_user_meta(get_current_user_id(), 'lw_card_id', true);
 
             //call directkit for MoneyInWithCardId
             $params = array(

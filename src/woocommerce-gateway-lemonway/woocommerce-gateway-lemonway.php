@@ -3,7 +3,7 @@
  Plugin Name: WooCommerce LemonWay Payment Gateway
  Plugin URI: https://www.lemonway.com
  Description: Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
- Version: 1.0.11
+ Version: 1.1.0
  Author: LemonWay <it@lemonway.com>
  Author URI: https://www.lemonway.com
  License: GPL3
@@ -200,22 +200,9 @@ final class Lemonway
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-
      
         $sql = array();
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_oneclick` (
-		    `id_oneclick` int(11) NOT NULL AUTO_INCREMENT,
-			`id_customer` int(11) NOT NULL,
-			`id_card` int(11) NOT NULL,
-			`card_num` varchar(30) NOT NULL,
-			`card_exp`  varchar(8) NOT NULL DEFAULT \'\',
-			`card_type` varchar(20) NOT NULL DEFAULT \'\',
-			`date_add` datetime NOT NULL,
-		    `date_upd` datetime NOT NULL,
-		    PRIMARY KEY  (`id_oneclick`)
-		) ENGINE=InnoDB '.$charset_collate.';';
-        
         $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_wktoken` (
 					    `id_cart_wktoken` int(11) NOT NULL AUTO_INCREMENT,
 						`id_cart` int(11) NOT NULL,

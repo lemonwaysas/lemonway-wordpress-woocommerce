@@ -48,13 +48,17 @@ class WC_Gateway_Lemonway_Notif_Handler
         if ($this->isGet()) {
             WC_Gateway_Lemonway::log('GET: ' . print_r($_GET, true));
 
-            do_action('valid-lemonway-notif-request', $this->order);
-            wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
+            if ($this->doubleCheck()) {
+                do_action('valid-lemonway-notif-request', $this->order);
+                wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
+            } else {
+                wp_die('Payment Failed', 'Payment Failed', array('response' => 500));
+            }
         } elseif ($this->isPost() && $this->validate_notif(wc_clean($_POST['response_code']))) {
             WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
             do_action('valid-lemonway-notif-request', $this->order);
         } else {
-            wp_die('Lemonway notification Request Failure', 'Lemonway Notification', array('response' => 500));
+            wp_die('LemonWay notification Request Failure', 'Lemonway Notification', array('response' => 500));
         }
     }
 
@@ -129,9 +133,9 @@ class WC_Gateway_Lemonway_Notif_Handler
                 //Save Card Data if is register case
                 $registerCard = get_post_meta($this->order->id, '_register_card', true);
                 if ($registerCard) {
-                    update_user_meta($this->order->get_user_id(), '_lw_card_type', $operation->EXTRA->TYP);
-                    update_user_meta($this->order->get_user_id(), '_lw_card_num', $operation->EXTRA->NUM);
-                    update_user_meta($this->order->get_user_id(), '_lw_card_exp', $operation->EXTRA->EXP);
+                    update_user_meta($this->order->get_user_id(), 'lw_card_type', $operation->EXTRA->TYP);
+                    update_user_meta($this->order->get_user_id(), 'lw_card_num', $operation->EXTRA->NUM);
+                    update_user_meta($this->order->get_user_id(), 'lw_card_exp', $operation->EXTRA->EXP);
                 }
 
                 $ret = true;

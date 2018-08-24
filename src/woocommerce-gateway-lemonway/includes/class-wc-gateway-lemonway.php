@@ -194,15 +194,16 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
             </p>'
         );
         
-        $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
-        $cardNum = get_user_meta(get_current_user_id(), '_lw_card_num', true);
-        //$cardExp = get_user_meta(get_current_user_id(),'_lw_card_exp',true);
+        $cardId = get_user_meta(get_current_user_id(), 'lw_card_id', true);
+        $cardType = get_user_meta(get_current_user_id(), 'lw_card_type', true);
+        $cardNum = get_user_meta(get_current_user_id(), 'lw_card_num', true);
+        $cardExp = get_user_meta(get_current_user_id(),'lw_card_exp',true);
         
         if (!empty($cardId)) {
             $oneclick_fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
                 <label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclick" />'
-                    . sprintf(__('Use my recorded card: %s', LEMONWAY_TEXT_DOMAIN), $cardNum) . '</label>
+                    . sprintf(__('Use my recorded card: %s %s - %s', LEMONWAY_TEXT_DOMAIN), $cardType, $cardNum, $cardExp) . '</label>
                 
             </p>',
             'register_card' => '<p class="form-row form-row-wide">
