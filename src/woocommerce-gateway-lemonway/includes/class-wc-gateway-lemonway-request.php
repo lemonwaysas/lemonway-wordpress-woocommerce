@@ -32,7 +32,10 @@ class WC_Gateway_Lemonway_Request
      * @return string
      */
     public function get_request_url($order)
-    {
+    {   
+        // LW Entreprise => autoCommission = 1
+        $autoCommission = empty($this->gateway->get_option(WC_Gateway_Lemonway::ENV_NAME)) ? 0 : 1;
+
         $registerCard = 0;
         $useCard = 0;
         if (isset($_POST['oneclick'])) {
@@ -64,6 +67,7 @@ class WC_Gateway_Lemonway_Request
                 "returnUrl" => $this->notify_url,
                 "cancelUrl" => esc_url_raw($order->get_cancel_order_url_raw()),
                 "errorUrl" => esc_url_raw($order->get_cancel_order_url_raw()), //@TODO change for a specific error url
+                "autoCommission" => $autoCommission,
                 "registerCard" => $registerCard
             );
 
@@ -85,10 +89,11 @@ class WC_Gateway_Lemonway_Request
             $params = array(
                 "wkToken" => $order->id,
                 "wallet" => $this->gateway->get_option(WC_Gateway_Lemonway::WALLET_MERCHANT_ID),
+                "cardId" => $cardId,
                 "amountTot" => $this->formatAmount($amount),
                 "amountCom" => "0.00",
                 "comment" => $comment . " - " . sprintf(__("One-click mode (card id: %s)", LEMONWAY_TEXT_DOMAIN), $cardId),
-                "cardId" => $cardId
+                "autoCommission" => $autoCommission
             );
 
             $operation = $this->gateway->getDirectkit()->MoneyInWithCardId($params);
