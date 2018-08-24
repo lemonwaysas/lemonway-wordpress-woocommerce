@@ -82,22 +82,21 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     protected $notifhandler;
 
-    //API CONFIGURATION
-    const API_LOGIN = 'api_login';
-    const API_PASSWORD = 'api_password';
-    const WALLET_MERCHANT_ID = 'merchant_id';
-    const DIRECTKIT_URL = 'https://ws.lemonway.fr/mb/lwecommerce/prod/directkitjson2/service.asmx';
-    const WEBKIT_URL = 'https://webkit.lemonway.fr/mb/lwecommerce/prod/';
-    const DIRECTKIT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/lwecommerce/dev/directkitjson2/service.asmx';
-    const WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/lwecommerce/dev/';
-    const IS_TEST_MODE = 'is_test_mode';
-    
-    //METHOD CONFIGURATION
+    const DEFAULT_ENV = 'lwecommerce';
     const ENABLED = 'enabled';
     const TITLE = 'title';
     const DESCRIPTION = 'description';
+    const API_LOGIN = 'api_login';
+    const API_PASSWORD = 'api_password';
+    const WALLET_MERCHANT_ID = 'merchant_id';
+    const DIRECTKIT_URL = 'https://ws.lemonway.fr/mb/%s/prod/directkitjson2/service.asmx';
+    const WEBKIT_URL = 'https://webkit.lemonway.fr/mb/%s/prod/';
+    const DIRECTKIT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/%s/dev/directkitjson2/service.asmx';
+    const WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/%s/dev/';
+    const IS_TEST_MODE = 'is_test_mode';
     const CSS_URL = 'css_url';
     const ONECLICK_ENABLED = 'oneclick_enabled';
+    const ENV_NAME = 'env_name';
     
     /**
      * Constructor for the gateway.
@@ -105,7 +104,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     public function __construct()
     {
         $this->id                 = 'woocommerce-gateway-lemonway';
-        $this->icon 			  = ''; //@TODO
+        $this->icon               = ''; //@TODO
         $this->has_fields         = true;
         $this->method_title       = __('LemonWay', LEMONWAY_TEXT_DOMAIN);
         $this->method_description = __('Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.', LEMONWAY_TEXT_DOMAIN);
@@ -113,24 +112,31 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         // Load the settings.
         $this->init_form_fields();
         $this->init_settings();
-    
+        
+        $this->title          = $this->get_option(self::TITLE);
+        $this->description    = $this->get_option(self::DESCRIPTION);
+
         //API informations
         $this->apiLogin = $this->get_option(self::API_LOGIN);
         $this->apiPassword = $this->get_option(self::API_PASSWORD);
         $this->merchantId = $this->get_option(self::WALLET_MERCHANT_ID);
-
-        $this->directkitUrl = self::DIRECTKIT_URL;
-        $this->webkitUrl = self::WEBKIT_URL;
-        $this->directkitUrlTest = self::DIRECTKIT_URL_TEST;
-        $this->webkitUrlTest = self::WEBKIT_URL_TEST;
-
-        $this->oneclickEnabled = 'yes' === $this->get_option(self::ONECLICK_ENABLED, 'no');
+        $this->envName = $this->get_option(self::ENV_NAME);
         $this->testMode       = 'yes' === $this->get_option(self::IS_TEST_MODE, 'no');
-        
-        // Define user set variables.
-        $this->title          = $this->get_option(self::TITLE);
-        $this->description    = $this->get_option(self::DESCRIPTION);
-        
+        $this->oneclickEnabled = 'yes' === $this->get_option(self::ONECLICK_ENABLED, 'no');
+
+        if (empty($this->envName)) {
+            // If LW4EC
+            $envName = self::DEFAULT_ENV;
+        } else {
+            // If LW Entreprise
+            $envName = $this->envName;
+        }
+
+        $this->directkitUrl = sprintf(self::DIRECTKIT_URL, $envName);
+        $this->webkitUrl = sprintf(self::WEBKIT_URL, $envName);
+        $this->directkitUrlTest = sprintf(self::DIRECTKIT_URL_TEST, $envName);
+        $this->webkitUrlTest = sprintf(self::WEBKIT_URL_TEST, $envName);
+
         $directkitUrl = $this->testMode ? $this->directkitUrlTest : $this->directkitUrl;
         $webkitUrl = $this->testMode ? $this->webkitUrlTest : $this->webkitUrl;
         
@@ -180,9 +186,9 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     {
         $oneclick_fields = array(
                 'register_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="oneclick" />'
+                <label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="oneclick" />'
                 . __('Save your card data for a next buy.', LEMONWAY_TEXT_DOMAIN) . '</label>
-			</p>'
+            </p>'
         );
         
         $cardId = get_user_meta(get_current_user_id(), '_lw_card_id', true);
@@ -192,34 +198,34 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         if (!empty($cardId)) {
             $oneclick_fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclick" />'
+                <label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclick" />'
                     . sprintf(__('Use my recorded card: %s', LEMONWAY_TEXT_DOMAIN), $cardNum) . '</label>
-				
-			</p>',
+                
+            </p>',
             'register_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-radio" value="register_card" type="radio" name="oneclick" />'
+                <label for="' . esc_attr($this->id) . '_register_card"><input id="' . esc_attr($this->id) . '_register_card" class="input-radio" value="register_card" type="radio" name="oneclick" />'
                     . __('Save new card data.', LEMONWAY_TEXT_DOMAIN) .'</label>
-				
-			</p>',
+                
+            </p>',
             'no_use_card' => '<p class="form-row form-row-wide">
-				<label for="' . esc_attr($this->id) . '_no_use_card"><input id="' . esc_attr($this->id) . '_no_use_card" class="input-radio"  value="no_use_card" type="radio" name="oneclick" />'
+                <label for="' . esc_attr($this->id) . '_no_use_card"><input id="' . esc_attr($this->id) . '_no_use_card" class="input-radio"  value="no_use_card" type="radio" name="oneclick" />'
                     . __('Not use recorded card data.', LEMONWAY_TEXT_DOMAIN) .'</label>
-				
-			</p>'
+                
+            </p>'
             );
         }
     
         $fields = wp_parse_args($fields, apply_filters('lemonway_oneclick_form_fields', $oneclick_fields, $this->id)); ?>
-			<fieldset id="<?php echo esc_attr($this->id); ?>-oneclic-form">
-				<?php do_action('lemonway_oneclick_form_start', $this->id); ?>
-				<?php
+            <fieldset id="<?php echo esc_attr($this->id); ?>-oneclic-form">
+                <?php do_action('lemonway_oneclick_form_start', $this->id); ?>
+                <?php
                     foreach ($fields as $field) {
                         echo $field;
                     } ?>
-				<?php do_action('lemonway_oneclick_form_end', $this->id); ?>
-				<div class="clear"></div>
-			</fieldset>
-			<?php
+                <?php do_action('lemonway_oneclick_form_end', $this->id); ?>
+                <div class="clear"></div>
+            </fieldset>
+            <?php
     }
     
     /**
