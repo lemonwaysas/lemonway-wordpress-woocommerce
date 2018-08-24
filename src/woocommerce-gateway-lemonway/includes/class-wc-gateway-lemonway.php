@@ -197,7 +197,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $cardId = get_user_meta(get_current_user_id(), 'lw_card_id', true);
         $cardType = get_user_meta(get_current_user_id(), 'lw_card_type', true);
         $cardNum = get_user_meta(get_current_user_id(), 'lw_card_num', true);
-        $cardExp = get_user_meta(get_current_user_id(),'lw_card_exp',true);
+        $cardExp = get_user_meta(get_current_user_id(), 'lw_card_exp', true);
         
         if (!empty($cardId)) {
             $oneclick_fields = array(

@@ -168,7 +168,7 @@ class WC_Gateway_Lemonway_Notif_Handler
             exit;
         }
 
-        if (( !empty($_GET['response_wkToken']) || !empty($_POST['response_transactionId'])) && !$order->has_status('processing')) {
+        if ((!empty($_GET['response_wkToken']) || !empty($_POST['response_transactionId'])) && !$order->has_status('processing')) {
             $this->payment_complete($order, (wc_clean($_POST['response_transactionId'])), __('Notification payment completed', LEMONWAY_TEXT_DOMAIN));
         }
     }

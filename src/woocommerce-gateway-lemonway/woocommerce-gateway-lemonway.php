@@ -37,7 +37,7 @@ final class Lemonway
      */
     public function __construct()
     {
-         // Define constants
+        // Define constants
         $this->define_constants();
          
         // Check plugin requirements
@@ -60,7 +60,7 @@ final class Lemonway
      */
     public function add_admin_menu()
     {
-        add_menu_page(__('LemonWay', LEMONWAY_TEXT_DOMAIN), __('LemonWay', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug . 'configuration', array($this, 'redirect_configuration'), plugins_url( 'woocommerce-gateway-lemonway/assets/img/icon.png' ), null);
+        add_menu_page(__('LemonWay', LEMONWAY_TEXT_DOMAIN), __('LemonWay', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug . 'configuration', array($this, 'redirect_configuration'), plugins_url('woocommerce-gateway-lemonway/assets/img/icon.png'), null);
     }
      
     /**

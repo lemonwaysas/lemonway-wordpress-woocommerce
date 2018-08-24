@@ -117,14 +117,13 @@ final class DirectkitJson
     }
     
     // IP of end-user
-    private function getUserIP() {
+    private function getUserIP()
+    {
         if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
             $ip = $_SERVER["HTTP_CLIENT_IP"];
-        }
-        elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+        } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
             $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        }
-        elseif (!empty($_SERVER["REMOTE_ADDR"])) {
+        } elseif (!empty($_SERVER["REMOTE_ADDR"])) {
             $ip = $_SERVER["REMOTE_ADDR"];
         } else {
             $ip = "";
@@ -141,7 +140,8 @@ final class DirectkitJson
         }
         $ua = "Woocommerce/" . $ua;
             
-        $ip = $this->getUserIP();;
+        $ip = $this->getUserIP();
+        ;
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }

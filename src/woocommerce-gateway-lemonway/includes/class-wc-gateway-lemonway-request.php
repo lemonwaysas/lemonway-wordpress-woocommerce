@@ -32,7 +32,7 @@ class WC_Gateway_Lemonway_Request
      * @return string
      */
     public function get_request_url($order)
-    {   
+    {
         // LW Entreprise => autoCommission = 1
         $autoCommission = empty($this->gateway->get_option(WC_Gateway_Lemonway::ENV_NAME)) ? 0 : 1;
 
