@@ -85,5 +85,11 @@ return array(
         'type'        => 'text',
         'description' => __('Environment name', LEMONWAY_TEXT_DOMAIN),
         'desc_tip'    => true
+    ),
+    WC_Gateway_Lemonway::TPL_NAME => array(
+        'title'       => __('Payment page template name', LEMONWAY_TEXT_DOMAIN),
+        'type'        => 'text',
+        'description' => __('Payment page template name', LEMONWAY_TEXT_DOMAIN),
+        'desc_tip'    => true
     )
 );

@@ -235,8 +235,8 @@ final class DirectkitJson
         }
     }
     
-    public function formatMoneyInUrl($moneyInToken, $cssUrl = '')
+    public function formatMoneyInUrl($moneyInToken, $cssUrl = '', $tplName = '')
     {
-        return $this->webkitUrl . "?moneyintoken=".$moneyInToken.'&p='.urlencode($cssUrl).'&lang='.$this->language;
+        return $this->webkitUrl . "?moneyintoken=" . $moneyInToken . "&p=" . urlencode($cssUrl) . "&tpl=" . urlencode($tplName) . "&lang=" . $this->language;
     }
 }

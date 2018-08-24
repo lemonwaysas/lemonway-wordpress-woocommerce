@@ -75,6 +75,8 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      * @var DirectkitJson $directkit
      */
     protected $directkit;
+
+    protected $envName;
     
     /**
      *
@@ -97,6 +99,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     const CSS_URL = 'css_url';
     const ONECLICK_ENABLED = 'oneclick_enabled';
     const ENV_NAME = 'env_name';
+    const TPL_NAME = 'tpl_name';
     
     /**
      * Constructor for the gateway.
@@ -121,7 +124,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $this->apiPassword = $this->get_option(self::API_PASSWORD);
         $this->merchantId = $this->get_option(self::WALLET_MERCHANT_ID);
         $this->envName = $this->get_option(self::ENV_NAME);
-        $this->testMode       = 'yes' === $this->get_option(self::IS_TEST_MODE, 'no');
+        $this->testMode = 'yes' === $this->get_option(self::IS_TEST_MODE, 'no');
         $this->oneclickEnabled = 'yes' === $this->get_option(self::ONECLICK_ENABLED, 'no');
 
         if (empty($this->envName)) {
