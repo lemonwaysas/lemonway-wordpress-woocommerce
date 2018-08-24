@@ -52,7 +52,7 @@ class WC_Gateway_Lemonway_Notif_Handler
                 do_action('valid-lemonway-notif-request', $this->order);
                 wp_redirect(esc_url_raw($this->gateway->get_return_url($this->order)));
             } else {
-                wp_die('Payment Failed', 'Payment Failed', array('response' => 500));
+                wp_die('Payment Error', 'Payment Error', array('response' => 500));
             }
         } elseif ($this->isPost() && $this->validate_notif(wc_clean($_POST['response_code']))) {
             WC_Gateway_Lemonway::log('POST: ' . print_r($_POST, true));
