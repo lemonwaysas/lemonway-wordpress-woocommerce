@@ -84,40 +84,43 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     protected $notifhandler;
 
-    const DEFAULT_ENV = 'lwecommerce';
-    const ENABLED = 'enabled';
-    const TITLE = 'title';
-    const DESCRIPTION = 'description';
-    const API_LOGIN = 'api_login';
-    const API_PASSWORD = 'api_password';
-    const WALLET_MERCHANT_ID = 'merchant_id';
-    const DIRECTKIT_URL = 'https://ws.lemonway.fr/mb/%s/prod/directkitjson2/service.asmx';
-    const WEBKIT_URL = 'https://webkit.lemonway.fr/mb/%s/prod/';
-    const DIRECTKIT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/%s/dev/directkitjson2/service.asmx';
-    const WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/%s/dev/';
-    const IS_TEST_MODE = 'is_test_mode';
-    const CSS_URL = 'css_url';
-    const ONECLICK_ENABLED = 'oneclick_enabled';
-    const ENV_NAME = 'env_name';
-    const TPL_NAME = 'tpl_name';
+    const DEFAULT_DIRECTKIT_URL = "https://ws.lemonway.fr/mb/lwecommerce/prod/lw4e_json/Service_json.asmx";
+    const DEFAULT_DIRECTKIT_URL_TEST = "https://sandbox-api.lemonway.fr/mb/lwecommerce/dev/lw4e_json/Service_json.asmx";
+    const DEFAULT_WEBKIT_URL = "https://webkit.lemonway.fr/mb/lwecommerce/prod";
+    const DEFAULT_WEBKIT_URL_TEST = "https://sandbox-webkit.lemonway.fr/lwecommerce/dev";
+    const ENABLED = "enabled";
+    const TITLE = "title";
+    const DESCRIPTION = "description";
+    const API_LOGIN = "api_login";
+    const API_PASSWORD = "api_password";
+    const WALLET_MERCHANT_ID = "merchant_id";
+    const DIRECTKIT_URL = "https://ws.lemonway.fr/mb/%s/prod/directkitjson2/service.asmx";
+    const WEBKIT_URL = "https://webkit.lemonway.fr/mb/%s/prod/";
+    const DIRECTKIT_URL_TEST = "https://sandbox-api.lemonway.fr/mb/%s/dev/directkitjson2/service.asmx";
+    const WEBKIT_URL_TEST = "https://sandbox-webkit.lemonway.fr/%s/dev/";
+    const IS_TEST_MODE = "is_test_mode";
+    const CSS_URL = "css_url";
+    const ONECLICK_ENABLED = "oneclick_enabled";
+    const ENV_NAME = "env_name";
+    const TPL_NAME = "tpl_name";
     
     /**
      * Constructor for the gateway.
      */
     public function __construct()
     {
-        $this->id                 = 'woocommerce-gateway-lemonway';
-        $this->icon               = ''; //@TODO
-        $this->has_fields         = true;
-        $this->method_title       = __('LemonWay', LEMONWAY_TEXT_DOMAIN);
+        $this->id = "woocommerce-gateway-lemonway";
+        $this->icon = ""; //@TODO
+        $this->has_fields = true;
+        $this->method_title = __('LemonWay', LEMONWAY_TEXT_DOMAIN);
         $this->method_description = __('Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.', LEMONWAY_TEXT_DOMAIN);
 
         // Load the settings.
         $this->init_form_fields();
         $this->init_settings();
         
-        $this->title          = $this->get_option(self::TITLE);
-        $this->description    = $this->get_option(self::DESCRIPTION);
+        $this->title = $this->get_option(self::TITLE);
+        $this->description = $this->get_option(self::DESCRIPTION);
 
         //API informations
         $this->apiLogin = $this->get_option(self::API_LOGIN);
@@ -129,16 +132,17 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
 
         if (empty($this->envName)) {
             // If LW4EC
-            $envName = self::DEFAULT_ENV;
+            $this->directkitUrl = self::DEFAULT_DIRECTKIT_URL;
+            $this->webkitUrl = self::DEFAULT_WEBKIT_URL;
+            $this->directkitUrlTest = self::DEFAULT_DIRECTKIT_URL_TEST;
+            $this->webkitUrlTest = self::DEFAULT_WEBKIT_URL_TEST;
         } else {
             // If LW Entreprise
-            $envName = $this->envName;
+            $this->directkitUrl = sprintf(self::DIRECTKIT_URL, $this->envName);
+            $this->webkitUrl = sprintf(self::WEBKIT_URL, $this->envName);
+            $this->directkitUrlTest = sprintf(self::DIRECTKIT_URL_TEST, $this->envName);
+            $this->webkitUrlTest = sprintf(self::WEBKIT_URL_TEST, $this->envName);
         }
-
-        $this->directkitUrl = sprintf(self::DIRECTKIT_URL, $envName);
-        $this->webkitUrl = sprintf(self::WEBKIT_URL, $envName);
-        $this->directkitUrlTest = sprintf(self::DIRECTKIT_URL_TEST, $envName);
-        $this->webkitUrlTest = sprintf(self::WEBKIT_URL_TEST, $envName);
 
         $directkitUrl = $this->testMode ? $this->directkitUrlTest : $this->directkitUrl;
         $webkitUrl = $this->testMode ? $this->webkitUrlTest : $this->webkitUrl;
