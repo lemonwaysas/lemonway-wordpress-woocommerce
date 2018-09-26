@@ -203,7 +203,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $cardNum = get_user_meta(get_current_user_id(), 'lw_card_num', true);
         $cardExp = get_user_meta(get_current_user_id(), 'lw_card_exp', true);
         
-        if (!empty($cardId)) {
+        if (!empty($cardId) && !empty($cardType) && !empty($cardNum) && !empty($cardExp)) {
             $oneclick_fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
                 <label for="' . esc_attr($this->id) . '_use_card"><input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="oneclick" />'

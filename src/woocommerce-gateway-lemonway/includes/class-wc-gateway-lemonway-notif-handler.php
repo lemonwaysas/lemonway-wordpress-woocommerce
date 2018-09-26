@@ -122,8 +122,8 @@ class WC_Gateway_Lemonway_Notif_Handler
 
         $operation = $this->GetMoneyInTransDetails();
 
-        // Status 3 means success
-        if ($operation && ($operation->STATUS == 3)) {
+        // Status 0 means success
+        if ($operation && ($operation->INT_STATUS == 0)) {
             // CREDIT + COMMISSION
             $realAmount = $operation->CRED + $operation->COM;
 

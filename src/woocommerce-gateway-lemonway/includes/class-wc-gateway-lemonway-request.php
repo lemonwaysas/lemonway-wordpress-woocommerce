@@ -98,7 +98,8 @@ class WC_Gateway_Lemonway_Request
 
             $operation = $this->gateway->getDirectkit()->MoneyInWithCardId($params);
 
-            if ($operation->STATUS == "3") {
+            if ($operation->INT_STATUS == 0) {
+                // Status 0 means success
                 $transaction_id = $operation->ID;
 
                 //Set transaction id to POST array. Needed on notif handler
