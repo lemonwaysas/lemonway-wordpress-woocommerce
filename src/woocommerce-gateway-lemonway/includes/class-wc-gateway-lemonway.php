@@ -245,12 +245,12 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     {
         include_once('class-wc-gateway-lemonway-request.php');
     
-        $order          = wc_get_order($order_id);
+        $order = wc_get_order($order_id);
         $lw_request = new WC_Gateway_Lemonway_Request($this);
     
         return array(
-                'result'   => 'success',
-                'redirect' => $lw_request->get_request_url($order)
+            "result"   => "success",
+            "redirect" => $lw_request->get_request_url($order)
         );
     }
     
