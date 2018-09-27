@@ -38,14 +38,14 @@ class WC_Gateway_Lemonway_Request
 
         $registerCard = 0;
         $useCard = 0;
-        if (isset($_POST['oneclick'])) {
-            $oneclick = wc_clean($_POST['oneclick']);
+        if (isset($_POST["oneclick"])) {
+            $oneclick = wc_clean($_POST["oneclick"]);
 
             switch ($oneclick) {
-                case 'register_card':
+                case "register_card":
                     $registerCard = 1;
                     break;
-                case 'use_card':
+                case "use_card":
                     $useCard = 1;
                     break;
             }
@@ -55,7 +55,7 @@ class WC_Gateway_Lemonway_Request
         $amount = $order->get_total();
 
         $comment = "Woocommerce " . sprintf(__('Order #%s by %s %s %s', LEMONWAY_TEXT_DOMAIN), $order->get_order_number(), $order->billing_last_name, $order->billing_first_name, $order->billing_email);
-        $returnUrl = '';
+        $returnUrl = "";
 
         if (!$useCard) {
             $params = array(

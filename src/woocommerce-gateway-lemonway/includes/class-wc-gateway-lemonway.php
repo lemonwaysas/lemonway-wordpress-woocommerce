@@ -89,7 +89,6 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     const DEFAULT_WEBKIT_URL = "https://webkit.lemonway.fr/mb/lwecommerce/prod";
     const DEFAULT_WEBKIT_URL_TEST = "https://sandbox-webkit.lemonway.fr/lwecommerce/dev";
     const ENABLED = "enabled";
-    const TITLE = "title";
     const DESCRIPTION = "description";
     const API_LOGIN = "api_login";
     const API_PASSWORD = "api_password";
@@ -111,7 +110,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     {
         $this->id = "woocommerce-gateway-lemonway";
         $this->icon = ""; //@TODO
-        $this->has_fields = true;
+        $this->has_fields = false;
         $this->method_title = __('LemonWay', LEMONWAY_TEXT_DOMAIN);
         $this->method_description = __('Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.', LEMONWAY_TEXT_DOMAIN);
 
@@ -119,7 +118,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
         $this->init_form_fields();
         $this->init_settings();
         
-        $this->title = $this->get_option(self::TITLE);
+        $this->title = $this->get_option("title");
         $this->description = $this->get_option(self::DESCRIPTION);
 
         //API informations
@@ -247,7 +246,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
     
         $order = wc_get_order($order_id);
         $lw_request = new WC_Gateway_Lemonway_Request($this);
-    
+        
         return array(
             "result"   => "success",
             "redirect" => $lw_request->get_request_url($order)

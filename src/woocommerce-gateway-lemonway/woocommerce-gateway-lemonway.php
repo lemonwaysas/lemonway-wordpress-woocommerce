@@ -3,7 +3,7 @@
  Plugin Name: WooCommerce LemonWay Payment Gateway
  Plugin URI: https://www.lemonway.com
  Description: Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
- Version: 1.1.0
+ Version: 1.2.0
  Author: LemonWay <it@lemonway.com>
  Author URI: https://www.lemonway.com
  License: GPL3
@@ -31,7 +31,6 @@ final class Lemonway
     
     const DB_VERSION = '1.0.0';
      
-     
     /**
      * Constructor
      */
@@ -46,8 +45,8 @@ final class Lemonway
         register_activation_hook(__FILE__, array($this,'lw_install'));
          
         add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'plugin_action_links' ));
-        add_action('plugins_loaded', array( $this, 'init_gateway' ), 0);
-        add_filter('woocommerce_payment_gateways', array( $this, 'add_gateway' ));
+        add_action('plugins_loaded', array( $this, 'init_lemonway_gateway' ), 0);
+        add_filter('woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway' ));
          
         //Add menu elements
         add_action('admin_menu', array($this, 'add_admin_menu'), 57);
@@ -66,7 +65,7 @@ final class Lemonway
     /**
      * Init Gateway
      */
-    public function init_gateway()
+    public function init_lemonway_gateway()
     {
         if (! class_exists('WC_Payment_Gateway')) {
             return;
@@ -99,7 +98,7 @@ final class Lemonway
     /**
      * Add the gateway to methods
      */
-    public function add_gateway($methods)
+    public function add_lemonway_gateway($methods)
     {
         $methods[] = 'WC_Gateway_Lemonway';
         return $methods;

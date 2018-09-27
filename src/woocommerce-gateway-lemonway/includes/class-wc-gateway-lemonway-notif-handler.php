@@ -28,7 +28,7 @@ class WC_Gateway_Lemonway_Notif_Handler
      */
     public function __construct($gateway)
     {
-        add_action('woocommerce_api_wc_gateway_lemonway', array($this, 'check_response'));
+        add_action('woocommerce_api_wc_gateway_lemonway', array($this, 'check_ipn_response'));
         add_action('valid-lemonway-notif-request', array($this, 'valid_response'));
         $this->gateway = $gateway;
     }
@@ -36,7 +36,7 @@ class WC_Gateway_Lemonway_Notif_Handler
     /**
      * Check for Notification IPN Response.
      */
-    public function check_response()
+    public function check_ipn_response()
     {
         $orderId = $this->isGet() ? wc_clean($_GET['response_wkToken']) : wc_clean($_POST['response_wkToken']);
 
@@ -74,12 +74,12 @@ class WC_Gateway_Lemonway_Notif_Handler
 
     protected function isGet()
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']) == 'GET';
+        return strtoupper($_SERVER['REQUEST_METHOD']) == "GET";
     }
 
     protected function isPost()
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
+        return strtoupper($_SERVER['REQUEST_METHOD']) == "POST";
     }
 
     /**
