@@ -243,7 +243,7 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        include_once('class-wc-gateway-lemonway-request.php');
+        include_once("class-wc-gateway-lemonway-request.php");
     
         $order = wc_get_order($order_id);
         $lw_request = new WC_Gateway_Lemonway_Request($this);
@@ -279,6 +279,6 @@ class WC_Gateway_Lemonway extends WC_Payment_Gateway
      */
     public function init_form_fields()
     {
-        $this->form_fields = include('settings-lemonway.php');
+        $this->form_fields = include("settings-lemonway.php");
     }
 }
