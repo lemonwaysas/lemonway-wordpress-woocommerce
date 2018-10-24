@@ -1,228 +1,188 @@
 <?php
-/*
- Plugin Name: WooCommerce LemonWay Payment Gateway
- Plugin URI: https://www.lemonway.com
- Description: Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
- Version: 1.2.0
- Author: LemonWay <it@lemonway.com>
- Author URI: https://www.lemonway.com
- License: GPL3
+/**
+ * Plugin Name: WooCommerce LemonWay Gateway
+ * Plugin URI: https://www.lemonway.com/ecommerce/
+ * Description: Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
+ * Version: 2.0.0
+ * Author: LemonWay <it@lemonway.com>
+ * Author URI: https://www.lemonway.com/
+ * License: GNU General Public License v3.0
+ * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain: woocommerce-gateway-lemonway
+ * Domain Path: /languages
+ * Requires at least: 4.4
+ * Tested up to: 4.9
+ * WC requires at least: 2.6
+ * WC tested up to: 3.4
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-} // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 
-final class Lemonway
+define( 'LEMONWAY_TEXT_DOMAIN', 'woocommerce-gateway-lemonway' );
+define( 'LEMONWAY_MAIN_FILE', __FILE__ );
+
+//Add menu elements
+add_action('admin_menu', 'add_admin_menu');
+add_action( 'plugins_loaded', 'init_lemonway_gateway_class' );
+
+function init_lemonway_gateway_class()
 {
-    /**
-     * @var Lemonway The single instance of the class
-     */
-    protected static $_instance = null;
-    
-    protected $name = "Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.";
-    protected $slug = 'woocommerce-gateway-lemonway';
-    
-    /**
-     * Pointer to gateway making the request.
-     * @var WC_Gateway_Lemonway
-     */
-    protected $gateway;
-    
-    const DB_VERSION = '1.0.0';
-     
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        // Define constants
-        $this->define_constants();
-         
-        // Check plugin requirements
-        $this->check_requirements();
-         
-        register_activation_hook(__FILE__, array($this,'lw_install'));
-         
-        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'plugin_action_links' ));
-        add_action('plugins_loaded', array( $this, 'init_lemonway_gateway' ), 0);
-        add_filter('woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway' ));
-         
-        //Add menu elements
-        add_action('admin_menu', array($this, 'add_admin_menu'), 57);
+    load_plugin_textdomain(LEMONWAY_TEXT_DOMAIN, false, plugin_basename( dirname( LEMONWAY_MAIN_FILE ) ) . '/languages' );
 
-        $this->load_plugin_textdomain();
+    if ( ! class_exists( 'WooCommerce' ) ) {
+        add_action('admin_notices', 'woocommerce_lemonway_missing_wc_notice');
+        return false;
     }
-     
-    /**
-     * Add menu LemonWay
-     */
-    public function add_admin_menu()
-    {
-        add_menu_page(__('LemonWay', LEMONWAY_TEXT_DOMAIN), __('LemonWay', LEMONWAY_TEXT_DOMAIN), 'manage_product_terms', $this->slug . 'configuration', array($this, 'redirect_configuration'), plugins_url('woocommerce-gateway-lemonway/assets/img/icon.png'), null);
-    }
-     
-    /**
-     * Init Gateway
-     */
-    public function init_lemonway_gateway()
-    {
-        if (! class_exists('WC_Payment_Gateway')) {
-            return;
-        }
-     
-        // Includes
-        include_once('includes/class-wc-gateway-lemonway.php');
-        $this->gateway = new WC_Gateway_Lemonway();
-    }
-     
-    /**
-     * Load Localisation files.
-     *
-     * Note: the first-loaded translation file overrides any following ones if
-     * the same translation is present.
-     *
-     * Locales found in:
-     *      - WP_LANG_DIR/woocommerce-gateway-lemonway/woocommerce-gateway-lemonway-LOCALE.mo
-     *      - WP_LANG_DIR/plugins/woocommerce-gateway-lemonway-LOCALE.mo
-     */
-    public function load_plugin_textdomain()
-    {
-        $locale = apply_filters('plugin_locale', get_locale(), LEMONWAY_TEXT_DOMAIN);
-        $dir    = trailingslashit(WP_LANG_DIR);
-     
-        load_textdomain(LEMONWAY_TEXT_DOMAIN, $dir . 'woocommerce-gateway-lemonway/woocommerce-gateway-lemonway-' . $locale . '.mo');
-        load_plugin_textdomain(LEMONWAY_TEXT_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages/');
-    }
-     
-    /**
-     * Add the gateway to methods
-     */
-    public function add_lemonway_gateway($methods)
-    {
-        $methods[] = 'WC_Gateway_Lemonway';
-        return $methods;
-    }
-     
-    public function redirect_configuration()
-    {
-        wp_redirect(admin_url('admin.php?page=wc-settings&tab=checkout&section=wc_gateway_lemonway'));
-    }
-     
-    /**
-     * Add relevant links to plugins page
-     * @param  array $links
-     * @return array
-     */
-    public function plugin_action_links($links)
-    {
-        $plugin_links = array(
-                 '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=wc_gateway_lemonway') . '">' . __('Settings', LEMONWAY_TEXT_DOMAIN) . '</a>',
-         );
-        return array_merge($plugin_links, $links);
-    }
-     
-    /**
-     * Main Lemonway Instance
-     *
-     * Ensures only one instance of Lemonway is loaded or can be loaded.
-     *
-     * @static
-     * @see LW()
-     * @return Lemonway - Main instance
-     */
-    public static function instance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
-    }
-     
-    /**
-     * Define Constants
-     *
-     * @access private
-     */
-    private function define_constants()
-    {
-        $woo_version_installed = get_option('woocommerce_version');
-        define('LEMONWAY_WOOVERSION', $woo_version_installed);
-        define('LEMONWAY_NAME', $this->name);
-        define('LEMONWAY_TEXT_DOMAIN', $this->slug);
-    }
-     
-     
-    /**
-     * Checks that the WordPress setup meets the plugin requirements.
-     *
-     * @access private
-     * @global string $wp_version
-     * @return boolean
-     */
-    private function check_requirements()
-    {
-        //global $wp_version, $woocommerce;
-     
-        require_once(ABSPATH.'/wp-admin/includes/plugin.php');
-     
-        //@TODO version compare
-     
-        if (function_exists('is_plugin_active')) {
-            if (!is_plugin_active('woocommerce/woocommerce.php')) {
-                add_action('admin_notices', array( &$this, 'alert_woo_not_active' ));
-                return false;
+
+    if ( ! class_exists( 'LemonWay' ) ) {
+        /**
+         * Constants
+         */
+        define( 'LEMONWAY_VERSION', '2.0.0' );
+        // define( 'LEMONWAY_MIN_PHP_VERSION', '5.6.0' );
+        // define( 'LEMONWAY_MIN_WC_VERSION', '2.6.0' );
+        //define( 'LEMONWAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( LEMONWAY_MAIN_FILE ) ), basename( LEMONWAY_MAIN_FILE ) ) ) );
+        // define( 'LEMONWAY_PLUGIN_PATH', untrailingslashit( plugin_dir_path( LEMONWAY_MAIN_FILE ) ) );
+
+        class LemonWay
+        {
+            /**
+             * @var Singleton The reference the Singleton instance of this class LemonWay
+             */
+            private static $instance;
+
+            /**
+             * Protected constructor to prevent creating a new instance of the Singleton via the 'new' operator from outside of this class
+             */
+            private function __construct()
+            {
+                add_action( 'admin_init', array( $this, 'install' ) );
+                
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/class-wc-lemonway-exception.php';
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/class-wc-lemonway-logger.php';
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/class-wc-lemonway-helper.php';
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/class-wc-lemonway-api.php';
+
+                // Payment gateways
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/abstracts/abstract-wc-lemonway-payment-gateway.php';
+                require_once dirname( LEMONWAY_MAIN_FILE ) . '/includes/class-wc-gateway-lemonway.php';
+                // @TODO: Sofort
+                // @TODO: iDeal
+
+                // @TODO: webhook handler
+                // @TODO: admin notices
+
+                add_filter('woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway_class'));
+                add_filter('plugin_action_links_' . plugin_basename( LEMONWAY_MAIN_FILE ), array( $this, 'plugin_action_links'));
+                add_filter('plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+            }
+
+            /**
+             * Ensure only one instance of LemonWay is loaded or can be loaded
+             * Return the Singleton instance of this class LemonWay
+             *
+             * @return Singleton The Singleton instance
+             */
+            public static function get_instance()
+            {
+                if (is_null(self::$instance)) {
+                    self::$instance = new self();
+                }
+                
+                return self::$instance;
+            }
+
+            /**
+             * Handle updates.
+             *
+             */
+            public function install()
+            {
+                if ( ! is_plugin_active( plugin_basename( LEMONWAY_MAIN_FILE ) ) ) {
+                    return;
+                }
+
+                if ( LEMONWAY_VERSION !== get_option( 'lemonway_version' ) ) {
+                    update_option( 'lemonway_version', LEMONWAY_VERSION );
+                }
+            }
+
+            /**
+             * Add LemonWay gateways to WooCommerce
+             *
+             */
+            public function add_lemonway_gateway_class( $methods )
+            {
+                $methods[] = 'WC_Gateway_LemonWay';
+                // @TODO: Sofort
+                // @TODO: iDeal
+                
+                return $methods;
+            }
+
+            /**
+             * Adds plugin action links
+             *
+             * @param mixed $links Plugin action links
+             */
+            public function plugin_action_links( $links )
+            {
+                $action_links = array(
+                    'settings' => '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=lemonway' ) . '" aria-label="' . esc_attr__( 'View LemonWay settings', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'Settings', LEMONWAY_TEXT_DOMAIN ) . '</a>',
+                );
+
+                return array_merge( $action_links, $links );
+            }
+
+            /**
+             * Show row meta on the plugin screen
+             *
+             * @param mixed $links Plugin row meta
+             * @param mixed $file  Plugin base file
+             * @return array
+             */
+            public static function plugin_row_meta( $links, $file ) {
+                if ( plugin_basename( LEMONWAY_MAIN_FILE ) === $file ) {
+                    $row_meta = array(
+                        'docs' => '<a href="' . esc_url( __('https://lemonway.zendesk.com/hc/en-gb/categories/201471749-WooCommerce', LEMONWAY_TEXT_DOMAIN) ) . '" aria-label="' . esc_attr__( 'View LemonWay documentation', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'Docs', LEMONWAY_TEXT_DOMAIN ) . '</a>',
+                        'apidocs' => '<a href="' . esc_url( __('http://documentation.lemonway.fr/ecommerce-en/', LEMONWAY_TEXT_DOMAIN) ) . '" aria-label="' . esc_attr__( 'View LemonWay API docs', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'API docs', LEMONWAY_TEXT_DOMAIN ) . '</a>',
+                        'support' => '<a href="' . esc_url( 'https://support.lemonway.com/' ) . '" aria-label="' . esc_attr__( 'Visit LemonWay customer support', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'Support', LEMONWAY_TEXT_DOMAIN ) . '</a>',
+                        'signup' => '<a href="' . esc_url( 'https://www.lemonway.com/ecommerce/' ) . '" aria-label="' . esc_attr__( 'Sign up', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'Sign up', LEMONWAY_TEXT_DOMAIN ) . '</a>',
+                        'signin' => '<a href="' . esc_url( 'https://ecommerce.lemonway.com' ) . '" aria-label="' . esc_attr__( 'Sign in', LEMONWAY_TEXT_DOMAIN ) . '">' . esc_html__( 'Sign in', LEMONWAY_TEXT_DOMAIN ) . '</a>'
+                    );
+
+                    return array_merge( $links, $row_meta );
+                }
+
+                return (array) $links;
             }
         }
-     
-        return true;
-    }
-     
 
-    /**
-     * Display the WooCommerce requirement notice.
-     *
-     * @access static
-     */
-    public static function alert_woo_not_active()
-    {
-        echo '<div id="message" class="error"><p>';
-        echo sprintf(__('Sorry, <strong>%s</strong> requires WooCommerce to be installed and activated first. Please <a href="%s">install WooCommerce</a> first.', LEMONWAY_TEXT_DOMAIN), LEMONWAY_NAME, admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce'));
-        echo '</p></div>';
-    }
-     
-    /**
-     * Setup SQL
-     */
-      
-    public function lw_install()
-    {
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-     
-        $sql = array();
-
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `'.$wpdb->prefix.'lemonway_wktoken` (
-					    `id_cart_wktoken` int(11) NOT NULL AUTO_INCREMENT,
-						`id_cart` int(11) NOT NULL,
-						`wktoken` varchar(190) NOT NULL,
-					    PRIMARY KEY  (`id_cart_wktoken`),
-		   				UNIQUE KEY `wktoken` (`wktoken`),
-		   				UNIQUE KEY `id_cart` (`id_cart`)
-					) ENGINE=InnoDB '.$charset_collate.';';
-     
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-     
-        foreach ($sql as $q) {
-            dbDelta($q);
-        }
-     
-        add_option('lw_db_version', self::DB_VERSION);
+        LemonWay::get_instance();
     }
 }
 
-function LW()
+/**
+ * Display WooCommerce requirement notice
+ *
+ */
+function woocommerce_lemonway_missing_wc_notice()
 {
-    return Lemonway::instance();
+    echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'LemonWay requires <a href="%s" target="_blank">WooCommerce to be installed and active</a>.', LEMONWAY_TEXT_DOMAIN), admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce')) . '</strong></p></div>';
 }
-LW();
+
+/**
+ * Add menu LemonWay
+ */
+function add_admin_menu()
+{
+    add_menu_page('LemonWay', 'LemonWay', 'manage_product_terms', 'lemonway', 'redirect_configuration_page', plugins_url( 'assets/images/icon.png', LEMONWAY_MAIN_FILE ), null);
+}
+
+function redirect_configuration_page()
+{
+    wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=lemonway' ) );
+    exit;
+}
