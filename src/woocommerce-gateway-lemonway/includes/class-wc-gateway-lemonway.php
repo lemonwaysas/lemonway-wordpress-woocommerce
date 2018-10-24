@@ -416,9 +416,9 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             $register_card = get_post_meta( $order_id, '_register_card', true );
 
             if ( $register_card ) {
-                update_user_meta( $customer_id, '_lw_card_num', $hpay->EXTRA->NUM );
-                update_user_meta( $customer_id, '_lw_card_exp', $hpay->EXTRA->EXP );
-                update_user_meta( $customer_id, '_lw_card_typ', $hpay->EXTRA->TYP );
+                update_user_meta( $customer_id, '_lw_card_num', isset($hpay->EXTRA->NUM) ? $hpay->EXTRA->NUM : '' );
+                update_user_meta( $customer_id, '_lw_card_exp', isset($hpay->EXTRA->EXP) ? $hpay->EXTRA->EXP : '' );
+                update_user_meta( $customer_id, '_lw_card_typ', isset($hpay->EXTRA->TYP) ? $hpay->EXTRA->TYP : '' );
             }
 
             $action = wc_clean( $_REQUEST['action'] );
