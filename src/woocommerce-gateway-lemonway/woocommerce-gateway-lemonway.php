@@ -71,7 +71,6 @@ function init_lemonway_gateway_class()
                 // @TODO: Sofort
                 // @TODO: iDeal
 
-                // @TODO: webhook handler
                 // @TODO: admin notices
 
                 add_filter('woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway_class'));

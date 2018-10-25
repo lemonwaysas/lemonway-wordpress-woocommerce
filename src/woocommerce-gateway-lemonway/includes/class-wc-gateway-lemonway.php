@@ -90,12 +90,12 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         ob_end_flush();
     }
 
-    private function isGet()
+    private function is_get()
     {
         return strtoupper($_SERVER['REQUEST_METHOD']) == 'GET';
     }
 
-    private function isPost()
+    private function is_post()
     {
         return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
     }
@@ -373,7 +373,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         WC_LemonWay_Logger::log('Callback ' . $_SERVER['REQUEST_METHOD'] . ': ' . print_r($_REQUEST, true));
 
         try {
-            if ( ! $this->isGet() && ! $this->isPost() ) {
+            if ( ! $this->is_get() && ! $this->is_post() ) {
                 throw new WC_LemonWay_Exception( 'HTTP method not allowed.',  __('HTTP method not allowed.', LEMONWAY_TEXT_DOMAIN), 405 );
             }
 
@@ -395,10 +395,22 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             $customer_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->customer_user : $order->get_customer_id();
 
             if ( wc_clean( $_REQUEST['customer_id'] ) != $customer_id ) {
-                $this->abort_order($order, __('Bad request.', LEMONWAY_TEXT_DOMAIN));
+                $this->abort_order($order, __('Bad request: Customer ID doesn\'t match.', LEMONWAY_TEXT_DOMAIN));
                 throw new WC_LemonWay_Exception( 'Bad request: Customer ID doesn\'t match.', __('Bad request.', LEMONWAY_TEXT_DOMAIN), $order_id );
             }
 
+            // Check IPN
+            if ( $this->is_post() ) {
+                if ( ! isset( $_POST['response_code'] ) || ! isset( $_POST['response_msg'] ) ) {
+                    $this->abort_order($order, __('Bad IPN: POST missing response_code or response_msg.', LEMONWAY_TEXT_DOMAIN));
+                    throw new WC_LemonWay_Exception( 'Bad IPN: POST missing response_code or response_msg.', '', $order_id  );
+                }
+
+                $response_code = wc_clean( $_POST['response_code'] );
+                $response_msg = wc_clean( $_POST['response_msg'] );
+            }
+
+            // Get transaction ID for GetMoneyInTransDetails
             $transaction_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? get_post_meta( $order_id, '_transaction_id', true ) : $order->get_transaction_id();
 
             if ( ! $transaction_id ) {
@@ -406,6 +418,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 throw new WC_LemonWay_Exception( 'Transaction not found.', __('Transaction not found.', LEMONWAY_TEXT_DOMAIN), $order_id );
             }
 
+            // GetMoneyInTransDetails
             $params = array(
                 'transactionId' => $transaction_id,
                 'transactionMerchantToken' => $wk_token
@@ -413,6 +426,13 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
             $hpay = $this->api->get_money_in_trans_details( $params );
 
+            // Error message
+            $error_msg = $hpay->INT_MSG;
+            if ( ! empty( $response_msg ) ) {
+                $error_msg .= ' (' . $response_msg . ')';
+            }
+
+            // Register card
             $register_card = get_post_meta( $order_id, '_register_card', true );
 
             if ( $register_card ) {
@@ -425,7 +445,20 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
             switch ($action) {
                 case 'return':
-                    switch ($hpay->INT_STATUS) {
+                    if ( $this->is_post() && '0000' !== $response_code ) {
+                        // 0000 means success
+                        if ( '2002' === $response_code ) {
+                            // Operation canceled by user
+                            wp_safe_redirect( $order->get_cancel_order_url() );
+                            exit;
+                        } else {
+                            // Error
+                            $this->abort_order( $order, $error_msg );
+                            throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
+                        }
+                    }
+
+                    switch ( $hpay->INT_STATUS ) {
                         case 0:
                             // Success
                             // add_post_meta unique => prevent double validation
@@ -433,7 +466,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                                 $order->payment_complete( $transaction_id );
                             }
                             
-                            if ( $this->isGet() ) {
+                            if ( $this->is_get() ) {
                                 wp_safe_redirect( $this->get_return_url( $order ) );
                                 exit;
                             }
@@ -441,8 +474,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                         
                         case 6:
                             // Error
-                            $this->abort_order($order, $hpay->INT_MSG);
-                            throw new WC_LemonWay_Exception( $hpay->INT_MSG, '', $order_id );
+                            $this->abort_order($order, $error_msg);
+                            throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
                             break;
 
                         default:
@@ -452,12 +485,13 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                     break;
                 
                 case 'error':
-                    $this->abort_order($order, $hpay->INT_MSG);
-                    throw new WC_LemonWay_Exception( $hpay->INT_MSG, '', $order_id );
+                    $this->abort_order($order, $error_msg);
+                    throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
                     break;
 
                 case 'cancel':
                     wp_safe_redirect( $order->get_cancel_order_url() );
+                    exit;
                     break;
 
                 default:
@@ -469,7 +503,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             WC_LemonWay_Logger::log( $_SERVER['REQUEST_METHOD'] . ' - Error: ' . $e->getMessage() . ' (' . $e->getCode() . ')');
 
             // If it's not IPN, display error to user
-            if ( $this->isGet() ) {
+            if ( $this->is_get() ) {
                 wc_add_notice(  __('Payment error:', LEMONWAY_TEXT_DOMAIN) . ' ' . $e->getLocalizedMessage() . ' (' . $e->getCode() . ')', 'error' );
                 wp_safe_redirect( wc_get_cart_url() );
                 exit;
