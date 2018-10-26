@@ -171,7 +171,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         $this->test_api();
 
         if ( $this->test_mode ) {
-            $this->add_warning( __( 'You are in test mode.', LEMONWAY_TEXT_DOMAIN ) );
+            $test_mode_field_key = $this->get_field_key( 'test_mode' );
+            $this->add_warning( __( 'You are in test mode.', LEMONWAY_TEXT_DOMAIN) );
             $this->display_warnings();
         }
 
@@ -183,8 +184,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
      */
     public function process_admin_options() {
         // Hash password
-        $field_key = $this->get_field_key( 'wlPass' );
-        //$_POST[$field_key] = hash( 'sha256', $_POST[$field_key] );
+        $wlPass_field_key = $this->get_field_key( 'wlPass' );
+        //$_POST[$wlPass_field_key] = hash( 'sha256', $_POST[$wlPass_field_key] );
 
         // Save settings into DB
         parent::process_admin_options();
@@ -311,7 +312,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 // Params for MoneyInWebInit
                 $params = array(
                     'wallet' => $this->wallet,
-                    'amountTot' => $this->formatAmount($amount),
+                    'amountTot' => $this->format_amount($amount),
                     'amountCom' => '0.00',
                     'comment' => $comment,
                     'wkToken' => $wk_token,
@@ -350,7 +351,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 $params = array(
                     'wallet' => $this->wallet,
                     "cardId" => $card_id,
-                    'amountTot' => $this->formatAmount($amount),
+                    'amountTot' => $this->format_amount($amount),
                     'amountCom' => '0.00',
                     'comment' => $comment . ' (One-click)',
                     'autoCommission' => $auto_commission

@@ -169,7 +169,7 @@ function init_lemonway_gateway_class()
  */
 function woocommerce_lemonway_missing_wc_notice()
 {
-    echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'LemonWay requires <a href="%s" target="_blank">WooCommerce to be installed and active</a>.', LEMONWAY_TEXT_DOMAIN), admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce')) . '</strong></p></div>';
+    echo '<div class="error"><p><strong>' . sprintf( __( 'LemonWay requires <a href="%s" target="_blank">WooCommerce to be installed and active</a>.', LEMONWAY_TEXT_DOMAIN), admin_url( 'plugin-install.php?tab=search&type=term&s=WooCommerce' ) ) . '</strong></p></div>';
 }
 
 /**

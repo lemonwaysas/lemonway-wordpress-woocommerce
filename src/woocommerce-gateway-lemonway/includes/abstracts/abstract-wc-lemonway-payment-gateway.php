@@ -149,7 +149,8 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     protected function load_api_settings()
     {   
         // Load main settings
-        $main_settings = get_option( $this->plugin_id . self::MAIN_GATEWAY_ID . '_settings' );
+        $settings_field_key = $this->get_option_key();
+        $main_settings = get_option( $settings_field_key );
 
         $this->wlLogin = ! empty( $main_settings['wlLogin'] ) ? $main_settings['wlLogin'] : '';
         $this->wlPass = ! empty( $main_settings['wlPass'] ) ? $main_settings['wlPass'] : '';
@@ -203,7 +204,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     /**
      * Format amount to X.XX
      */
-    protected function formatAmount($amount)
+    protected function format_amount($amount)
     {
         return number_format ( $amount , 2 , '.' , '' );
     }
@@ -250,4 +251,5 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     // @TODO: admin_options
     // @TODO: validation options
     // @TODO: save payment method
+    // @TODO: refund
 }
