@@ -45,6 +45,13 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     );
 
     /**
+     * Validation warnings.
+     *
+     * @var array of strings
+     */
+    protected $warnings = array();
+
+    /**
      * Directkit URL
      *
      * @var string
@@ -108,6 +115,35 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     protected $api;
 
     /**
+     * Add an warning message for display in admin on save.
+     *
+     * @param string $warning Warning message.
+     */
+    protected function add_warning( $warning ) {
+        $this->warnings[] = $warning;
+    }
+
+    /**
+     * Get admin warning messages.
+     */
+    protected function get_warnings() {
+        return $this->warnings;
+    }
+
+    /**
+     * Display admin warning messages.
+     */
+    protected function display_warnings() {
+        if ( $this->get_warnings() ) {
+            echo '<div id="woocommerce_warnings" class="notice-warning notice is-dismissible">';
+            foreach ( $this->get_warnings() as $warning ) {
+                echo '<p>' . wp_kses_post( $warning ) . '</p>';
+            }
+            echo '</div>';
+        }
+    }
+
+    /**
      * Load API settings
      */
     protected function load_api_settings()
@@ -156,7 +192,6 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
             if ( ! is_ajax() ) {
                 $this->add_error( $e->getLocalizedMessage() . ' (' . $e->getCode() . ')' );
                 $this->display_errors();
-                // @TODO: improve error notice
             }
 
             return false;
@@ -214,7 +249,5 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     // @TODO: min/max amount
     // @TODO: admin_options
     // @TODO: validation options
-    // @TODO: test API when form load
-    // @TODO: warning test mode
     // @TODO: save payment method
 }

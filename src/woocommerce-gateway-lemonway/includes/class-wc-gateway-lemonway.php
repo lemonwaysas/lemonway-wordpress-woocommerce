@@ -169,6 +169,12 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         $this->set_up_api();
         // Test API
         $this->test_api();
+
+        if ( $this->test_mode ) {
+            $this->add_warning( __( 'You are in test mode.', LEMONWAY_TEXT_DOMAIN ) );
+            $this->display_warnings();
+        }
+
         parent::admin_options();
     }
 
