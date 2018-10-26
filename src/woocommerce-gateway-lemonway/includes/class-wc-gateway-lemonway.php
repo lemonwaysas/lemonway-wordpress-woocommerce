@@ -100,7 +100,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
     }
 
-    private function abort_order($order, $order_note = '')
+    private function abort_order( $order, $order_note = '' )
     {
         $order_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->id : $order->get_id();
         $wk_token = get_post_meta( $order_id, '_wk_token', true );
@@ -146,6 +146,17 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
     }
 
     /**
+     * @override
+     */
+    public function needs_setup() {
+        // Set up API
+        $this->set_up_api();
+
+        return ! $this->test_api();
+        // Needs setup if test API doesn't pass
+    }
+
+    /**
      * Initialise gateway settings form fields
      */
     public function init_form_fields()
@@ -153,12 +164,21 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         $this->form_fields = require dirname( __FILE__ ) . '/settings/settings-lemonway.php';
     }
 
+    public function admin_options() {
+        // Set up API
+        $this->set_up_api();
+        // Test API
+        $this->test_api();
+        parent::admin_options();
+    }
+
     /**
      * Processes and saves options.
      */
     public function process_admin_options() {
         // Hash password
-        //$_POST['woocommerce_lemonway_wlPass'] = hash('sha256', $_POST['woocommerce_lemonway_wlPass']);
+        $field_key = $this->get_field_key( 'wlPass' );
+        //$_POST[$field_key] = hash( 'sha256', $_POST[$field_key] );
 
         // Save settings into DB
         parent::process_admin_options();
@@ -167,7 +187,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         $this->load_api_settings();
 
         // Generate API endpoints
-        if (empty($this->env_name)) {
+        if ( empty( $this->env_name ) ) {
             // If LW4E
             if (!$this->test_mode) {
                 // If live mode
@@ -182,24 +202,18 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             // If LW Entreprise
             if (!$this->test_mode) {
                 // If live mode
-                $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_PROD, $this->env_name);
-                $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_PROD, $this->env_name);
+                $this->directkit_url = sprintf( self::LEMONWAY_DIRECTKIT_FORMAT_URL_PROD, $this->env_name );
+                $this->webkit_url = sprintf( self::LEMONWAY_WEBKIT_FORMAT_URL_PROD, $this->env_name );
             } else {
                 // If test mode
-                $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_TEST, $this->env_name);
-                $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name);
+                $this->directkit_url = sprintf( self::LEMONWAY_DIRECTKIT_FORMAT_URL_TEST, $this->env_name );
+                $this->webkit_url = sprintf( self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name );
             }
         }
 
         // Save into DB
-        $this->update_option('directkit_url', $this->directkit_url);
-        $this->update_option('webkit_url', $this->webkit_url);
-
-        // Set up API
-        $this->set_up_api();
-
-        // Test API
-        $this->test_api();
+        $this->update_option( 'directkit_url', $this->directkit_url );
+        $this->update_option( 'webkit_url', $this->webkit_url );
     }
 
     /**

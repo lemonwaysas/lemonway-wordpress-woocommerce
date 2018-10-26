@@ -64,8 +64,8 @@ class WC_LemonWay_API
             'walletUa' => $ua,
         );
 
-        $requestParams = array_merge($baseParams, $params);
-        $requestParams = array('p' => $requestParams);
+        $requestParams = array_merge( $baseParams, $params );
+        $requestParams = array( 'p' => $requestParams );
 
         $headers = array(
             'Content-type' => 'application/json; charset=utf-8',
@@ -79,7 +79,7 @@ class WC_LemonWay_API
             array(
                 'method'  => 'POST',
                 'headers' => $headers,
-                'body'    => json_encode($requestParams)
+                'body'    => json_encode( $requestParams )
             )
         );
 

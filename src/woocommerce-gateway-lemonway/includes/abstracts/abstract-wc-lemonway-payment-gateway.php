@@ -153,10 +153,16 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         try {
             $wallet_details = $this->api->get_wallet_details($params);
         } catch (WC_LemonWay_Exception $e) {
-            $this->add_error( $e->getLocalizedMessage() . ' (' . $e->getCode() . ')' );
-            $this->display_errors();
-            // @TODO: improve error notice
+            if ( ! is_ajax() ) {
+                $this->add_error( $e->getLocalizedMessage() . ' (' . $e->getCode() . ')' );
+                $this->display_errors();
+                // @TODO: improve error notice
+            }
+
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -185,15 +191,15 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         // Load API settings
         $this->load_api_settings();
 
-        if ($this->test_mode) {
+        if ( $this->test_mode ) {
             $this->title .= ' [TEST]';
-            $this->description = '[' . __('This is only a test payment.', LEMONWAY_TEXT_DOMAIN) . ' <a href="' . __('https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN) . '</a>' . ']' . "\n" . $this->description;
+            $this->description = '[' . __( 'This is only a test payment.', LEMONWAY_TEXT_DOMAIN ) . ' <a href="' . __( 'https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN ) . '" target="_blank">' . __( 'Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN ) . '</a>' . ']' . "\n" . $this->description;
         }
 
         // Set API language
-        $locale = substr(get_locale(), 0, 2);
+        $locale = substr( get_locale(), 0, 2 );
 
-        if (array_key_exists($locale, $this->supported_locales)) {
+        if ( array_key_exists( $locale, $this->supported_locales ) ) {
             $this->language = $this->supported_locales[$locale];
         } else {
             $this->language = 'en';
@@ -205,8 +211,10 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
     }
 
+    // @TODO: min/max amount
     // @TODO: admin_options
     // @TODO: validation options
     // @TODO: test API when form load
     // @TODO: warning test mode
+    // @TODO: save payment method
 }

@@ -50,18 +50,26 @@ return array(
         'title' => __('Username', LEMONWAY_TEXT_DOMAIN),
         'type' => 'text',
         'description' => '<a href="https://www.lemonway.com/ecommerce/" target="_blank">' . __('Create an account', LEMONWAY_TEXT_DOMAIN) . '</a>',
-        'required' => 'required'
+        'custom_attributes' => array(
+            'required' => 'required'
+        )
     ),
     'wlPass' => array(
         'title' => __('Password', LEMONWAY_TEXT_DOMAIN),
         'type' => 'password',
-        'description' => '<a href="' . __('https://ecommerce.lemonway.com/en/seller/lost-password', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Forgot password?', LEMONWAY_TEXT_DOMAIN) . '</a>'
+        'description' => '<a href="' . __('https://ecommerce.lemonway.com/en/seller/lost-password', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Forgot password?', LEMONWAY_TEXT_DOMAIN) . '</a>',
+        'custom_attributes' => array(
+            'required' => 'required'
+        )
     ),
     'wallet' => array(
         'title' => __('Wallet external ID', LEMONWAY_TEXT_DOMAIN),
         'type' => 'text',
         'description' => __('External ID of your technical wallet', LEMONWAY_TEXT_DOMAIN),
-        'desc_tip' => true
+        'desc_tip' => true,
+        'custom_attributes' => array(
+            'required' => 'required'
+        )
     ),
     'test_mode' => array(
         'title' => __('Test mode', LEMONWAY_TEXT_DOMAIN),
