@@ -183,10 +183,6 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
      * Processes and saves options.
      */
     public function process_admin_options() {
-        // Hash password
-        $wlPass_field_key = $this->get_field_key( 'wlPass' );
-        //$_POST[$wlPass_field_key] = hash( 'sha256', $_POST[$wlPass_field_key] );
-
         // Save settings into DB
         parent::process_admin_options();
 

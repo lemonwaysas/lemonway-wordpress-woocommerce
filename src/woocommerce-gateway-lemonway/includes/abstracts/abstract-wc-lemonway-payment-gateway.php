@@ -247,9 +247,23 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
     }
 
+    /**
+     * Hash wlPass
+     *
+     * @param  string $key Field key.
+     * @param  string $value Posted Value.
+     * @return string
+     */
+    public function validate_wlPass_field( $key, $value ) {
+        if ($value != $this->wlPass) {
+            $value = hash( 'sha256', $value );
+        }
+
+        return $this->validate_password_field( $key, $value );
+    }
+
     // @TODO: min/max amount
     // @TODO: admin_options
-    // @TODO: validation options
     // @TODO: save payment method
     // @TODO: refund
 }
