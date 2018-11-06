@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -8,23 +8,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 return array(
     'enabled' => array(
-        'title' => __( 'Enable/Disable', 'woocommerce' ),
+        'title' => __('Enable/Disable', 'woocommerce'),
         'type' => 'checkbox',
-        'label'   => __( 'Enable LemonWay', LEMONWAY_TEXT_DOMAIN ),
+        'label'   => __('Enable LemonWay', LEMONWAY_TEXT_DOMAIN),
         'default' => 'yes'
     ),
     'title' => array(
-        'title' => __( 'Title', 'woocommerce' ),
+        'title' => __('Title', 'woocommerce'),
         'type' => 'text',
-        'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
-        'default' => __( 'Credit Card', LEMONWAY_TEXT_DOMAIN ),
+        'description' => __('This controls the title which the user sees during checkout.', 'woocommerce'),
+        'default' => __('Credit Card', LEMONWAY_TEXT_DOMAIN),
         'desc_tip'      => true
     ),
     'description' => array(
-        'title' => __( 'Description', 'woocommerce' ),
+        'title' => __('Description', 'woocommerce'),
         'type' => 'textarea',
-        'description' => __( 'This controls the description which the user sees during checkout.', LEMONWAY_TEXT_DOMAIN ),
-        'default' => __( 'Pay with your credit card.', LEMONWAY_TEXT_DOMAIN ),
+        'description' => __('This controls the description which the user sees during checkout.', LEMONWAY_TEXT_DOMAIN),
+        'default' => __('Pay with your credit card.', LEMONWAY_TEXT_DOMAIN),
         'desc_tip'      => true
     ),
     'css_url' => array(

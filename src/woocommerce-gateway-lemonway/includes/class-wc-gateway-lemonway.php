@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @extends WC_LemonWay_Payment_Gateway
  */
 class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
-{   
+{
     const DEFAULT_CSS_URL = 'https://webkit.lemonway.fr/css/mercanet/mercanet_lw_custom.css';
 
     /**
@@ -38,19 +38,19 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
      *
      */
     private function one_click_form()
-    {   
-        $card_id = get_user_meta( get_current_user_id(), '_lw_card_id', true );
-        $card_num = get_user_meta( get_current_user_id(), '_lw_card_num', true );
-        $card_exp = get_user_meta( get_current_user_id(), '_lw_card_exp', true );
-        $card_typ = get_user_meta( get_current_user_id(), '_lw_card_typ', true );
+    {
+        $card_id = get_user_meta(get_current_user_id(), '_lw_card_id', true);
+        $card_num = get_user_meta(get_current_user_id(), '_lw_card_num', true);
+        $card_exp = get_user_meta(get_current_user_id(), '_lw_card_exp', true);
+        $card_typ = get_user_meta(get_current_user_id(), '_lw_card_typ', true);
         
-        if ( empty( $card_id ) || empty( $card_typ ) || empty( $card_num ) || empty( $card_exp ) ) {
+        if (empty($card_id) || empty($card_typ) || empty($card_num) || empty($card_exp)) {
             // No saved card
             $fields = array(
                 'register_card' => '<p class="form-row form-row-wide">
-                    <label for="' . esc_attr( $this->id ) . '_register_card">
-                        <input id="' . esc_attr( $this->id ) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="one_click" />'
-                        . __( 'Save your card data for a next buy.', LEMONWAY_TEXT_DOMAIN )
+                    <label for="' . esc_attr($this->id) . '_register_card">
+                        <input id="' . esc_attr($this->id) . '_register_card" class="input-checkbox" value="register_card" type="checkbox" name="one_click" />'
+                        . __('Save your card data for a next buy.', LEMONWAY_TEXT_DOMAIN)
                     . '</label>
                 </p>'
             );
@@ -58,21 +58,21 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             // Saved card
             $fields = array(
                 'use_card' => '<p class="form-row form-row-wide">
-                    <label for="' . esc_attr( $this->id ) . '_use_card">
-                        <input id="' . esc_attr( $this->id ) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="one_click" /> '
-                        . sprintf( __( 'Use my saved card: %s %s - %s', LEMONWAY_TEXT_DOMAIN ), $card_typ, $card_num, $card_exp )
+                    <label for="' . esc_attr($this->id) . '_use_card">
+                        <input id="' . esc_attr($this->id) . '_use_card" class="input-radio" checked="checked" value="use_card" type="radio" name="one_click" /> '
+                        . sprintf(__('Use my saved card: %s %s - %s', LEMONWAY_TEXT_DOMAIN), $card_typ, $card_num, $card_exp)
                     . '</label>
                 </p>',
                 'register_card' => '<p class="form-row form-row-wide">
                     <label for="' . esc_attr($this->id) . '_register_card">
                         <input id="' . esc_attr($this->id) . '_register_card" class="input-radio" value="register_card" type="radio" name="one_click" /> '
-                        . __( 'Save new card data.', LEMONWAY_TEXT_DOMAIN )
+                        . __('Save new card data.', LEMONWAY_TEXT_DOMAIN)
                     .'</label>
                 </p>',
                 'no_use_card' => '<p class="form-row form-row-wide">
-                    <label for="' . esc_attr( $this->id ) . '_no_use_card">
-                        <input id="' . esc_attr( $this->id ) . '_no_use_card" class="input-radio" value="no_use_card" type="radio" name="one_click" /> '
-                        . __( 'Not use saved card.', LEMONWAY_TEXT_DOMAIN )
+                    <label for="' . esc_attr($this->id) . '_no_use_card">
+                        <input id="' . esc_attr($this->id) . '_no_use_card" class="input-radio" value="no_use_card" type="radio" name="one_click" /> '
+                        . __('Not use saved card.', LEMONWAY_TEXT_DOMAIN)
                     .'</label>
                 </p>'
             );
@@ -80,12 +80,12 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
         ob_start();
 
-            echo '<fieldset id="' . esc_attr($this->id). '-one-click-form">';
-                foreach ($fields as $field) {
-                    echo $field;
-                }
-                echo '<div class="clear"></div>';
-            echo '</fieldset>';
+        echo '<fieldset id="' . esc_attr($this->id). '-one-click-form">';
+        foreach ($fields as $field) {
+            echo $field;
+        }
+        echo '<div class="clear"></div>';
+        echo '</fieldset>';
 
         ob_end_flush();
     }
@@ -100,24 +100,24 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
     }
 
-    private function abort_order( $order, $order_note = '' )
+    private function abort_order($order, $order_note = '')
     {
-        $order_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->id : $order->get_id();
-        $wk_token = get_post_meta( $order_id, '_wk_token', true );
+        $order_id = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->id : $order->get_id();
+        $wk_token = get_post_meta($order_id, '_wk_token', true);
 
         // add_post_meta unique => prevent double validation
-        if ( ! $wk_token || add_post_meta( $order_id, '_' . $wk_token . '_is_validated', false, true ) ) {
+        if (! $wk_token || add_post_meta($order_id, '_' . $wk_token . '_is_validated', false, true)) {
             // If not validated yet
-            if ( ! $order->has_status( 'failed' ) ) {
+            if (! $order->has_status('failed')) {
                 // If order is not already failed, fail it
-                $order->update_status( 'failed', $order_note );
+                $order->update_status('failed', $order_note);
             } else {
                 // If already fail it => add note
-                $order->add_order_note( $order_note );
+                $order->add_order_note($order_note);
             }
-        } elseif ( update_post_meta( $order_id, '_' . $wk_token . '_is_validated', false ) ) {
-                // If already validated but didn't fail it => fail it
-                $order->update_status( 'failed', $order_note );
+        } elseif (update_post_meta($order_id, '_' . $wk_token . '_is_validated', false)) {
+            // If already validated but didn't fail it => fail it
+            $order->update_status('failed', $order_note);
         }
     }
 
@@ -135,20 +135,21 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
         parent::__construct();
 
-        $this->tpl_name = $this->get_option( 'tpl_name' );
-        $this->css_url = $this->get_option( 'css_url' );
-        $this->one_click = ( ! empty( $this->get_option( 'one_click' ) ) && 'yes' === $this->get_option( 'one_click' ) ) ? true : false;
+        $this->tpl_name = $this->get_option('tpl_name');
+        $this->css_url = $this->get_option('css_url');
+        $this->one_click = (! empty($this->get_option('one_click')) && 'yes' === $this->get_option('one_click')) ? true : false;
 
         // Has fields if one click
         $this->has_fields = $this->one_click;
 
-        add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ), array( $this, 'callback_handler' ) );
+        add_action('woocommerce_api_' . strtolower(get_class($this)), array( $this, 'callback_handler' ));
     }
 
     /**
      * @override
      */
-    public function needs_setup() {
+    public function needs_setup()
+    {
         // Set up API
         $this->set_up_api();
 
@@ -161,18 +162,19 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
      */
     public function init_form_fields()
     {
-        $this->form_fields = require dirname( __FILE__ ) . '/settings/settings-lemonway.php';
+        $this->form_fields = require dirname(__FILE__) . '/settings/settings-lemonway.php';
     }
 
-    public function admin_options() {
+    public function admin_options()
+    {
         // Set up API
         $this->set_up_api();
         // Test API
         $this->test_api();
 
-        if ( $this->test_mode ) {
-            $test_mode_field_key = $this->get_field_key( 'test_mode' );
-            $this->add_warning( __( 'You are in test mode.', LEMONWAY_TEXT_DOMAIN) );
+        if ($this->test_mode) {
+            $test_mode_field_key = $this->get_field_key('test_mode');
+            $this->add_warning(__('You are in test mode.', LEMONWAY_TEXT_DOMAIN));
             $this->display_warnings();
         }
 
@@ -182,7 +184,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
     /**
      * Processes and saves options.
      */
-    public function process_admin_options() {
+    public function process_admin_options()
+    {
         // Save settings into DB
         parent::process_admin_options();
 
@@ -190,7 +193,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         $this->load_api_settings();
 
         // Generate API endpoints
-        if ( empty( $this->env_name ) ) {
+        if (empty($this->env_name)) {
             // If LW4E
             if (!$this->test_mode) {
                 // If live mode
@@ -205,18 +208,18 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             // If LW Entreprise
             if (!$this->test_mode) {
                 // If live mode
-                $this->directkit_url = sprintf( self::LEMONWAY_DIRECTKIT_FORMAT_URL_PROD, $this->env_name );
-                $this->webkit_url = sprintf( self::LEMONWAY_WEBKIT_FORMAT_URL_PROD, $this->env_name );
+                $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_PROD, $this->env_name);
+                $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_PROD, $this->env_name);
             } else {
                 // If test mode
-                $this->directkit_url = sprintf( self::LEMONWAY_DIRECTKIT_FORMAT_URL_TEST, $this->env_name );
-                $this->webkit_url = sprintf( self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name );
+                $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_TEST, $this->env_name);
+                $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name);
             }
         }
 
         // Save into DB
-        $this->update_option( 'directkit_url', $this->directkit_url );
-        $this->update_option( 'webkit_url', $this->webkit_url );
+        $this->update_option('directkit_url', $this->directkit_url);
+        $this->update_option('webkit_url', $this->webkit_url);
     }
 
     /**
@@ -226,7 +229,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
     {
         parent::payment_fields();
 
-        if ( is_user_logged_in() && $this->one_click ) {
+        if (is_user_logged_in() && $this->one_click) {
             $this->one_click_form();
         }
     }
@@ -238,36 +241,36 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
      *
      * @return array
      */
-    public function process_payment( $order_id )
+    public function process_payment($order_id)
     {
         try {
-            $order = wc_get_order( $order_id );
+            $order = wc_get_order($order_id);
 
             // Get order info
-            $customer_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->customer_user : $order->get_customer_id();
-            $shop_name = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+            $customer_id = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->customer_user : $order->get_customer_id();
+            $shop_name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
             $order_number = $order->get_order_number();
-            $billing_first_name = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->billing_first_name : $order->get_billing_first_name();
-            $billing_last_name  = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->billing_last_name : $order->get_billing_last_name();
-            $billing_email = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->billing_email : $order->get_billing_email();
+            $billing_first_name = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->billing_first_name : $order->get_billing_first_name();
+            $billing_last_name  = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->billing_last_name : $order->get_billing_last_name();
+            $billing_email = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->billing_email : $order->get_billing_email();
             
             // Generate an unique wkToken
-            $wk_token = $order_id . '_' . $customer_id . '_' . current_time( 'timestamp' );
-            update_post_meta( $order_id, '_wk_token', $wk_token );
+            $wk_token = $order_id . '_' . $customer_id . '_' . current_time('timestamp');
+            update_post_meta($order_id, '_wk_token', $wk_token);
 
             $amount = $order->get_total();
 
             // LW Entreprise => autocom
-            $auto_commission = empty( $this->env_name ) ? 0 : 1;
+            $auto_commission = empty($this->env_name) ? 0 : 1;
 
             // One-click
             $register_card = 0;
             $use_card = 0;
 
-            if ( is_user_logged_in() && isset( $_POST['one_click'] ) ) {
-                $one_click = wc_clean( $_POST['one_click'] );
+            if (is_user_logged_in() && isset($_POST['one_click'])) {
+                $one_click = wc_clean($_POST['one_click']);
 
-                switch ( $one_click ) {
+                switch ($one_click) {
                     case 'register_card':
                         $register_card = 1;
                         break;
@@ -280,11 +283,11 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             // Generate comment for transaction with order info
             $comment = 'Woocommerce - ' . sprintf('%1$s - Order %2$s by %3$s %4$s (%5$s)', $shop_name, $order_number, $billing_first_name, $billing_last_name, $billing_email);
             
-            if ( $this->test_mode ) {
+            if ($this->test_mode) {
                 $comment = '[TEST] ' . $comment;
             }
 
-            if ( ! is_user_logged_in() || ! $use_card ) {
+            if (! is_user_logged_in() || ! $use_card) {
                 // MoneyInWebInit
 
                 // Callback params
@@ -293,17 +296,17 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                     'customer_id' => $customer_id
                 );
 
-                $return_args = array_merge( $args, array(
+                $return_args = array_merge($args, array(
                     'action' => 'return'
-                ) );
+                ));
 
-                $error_args = array_merge( $args, array(
+                $error_args = array_merge($args, array(
                     'action' => 'error'
-                ) );
+                ));
 
-                $cancel_args = array_merge( $args, array(
+                $cancel_args = array_merge($args, array(
                     'action' => 'cancel'
-                ) );
+                ));
 
                 // Params for MoneyInWebInit
                 $params = array(
@@ -312,22 +315,22 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                     'amountCom' => '0.00',
                     'comment' => $comment,
                     'wkToken' => $wk_token,
-                    'returnUrl' => add_query_arg( $return_args, WC()->api_request_url( get_class( $this ) ) ),
-                    'errorUrl' => add_query_arg( $error_args, WC()->api_request_url( get_class( $this ) ) ),
-                    'cancelUrl' => add_query_arg( $cancel_args, WC()->api_request_url( get_class( $this ) ) ),
+                    'returnUrl' => add_query_arg($return_args, WC()->api_request_url(get_class($this))),
+                    'errorUrl' => add_query_arg($error_args, WC()->api_request_url(get_class($this))),
+                    'cancelUrl' => add_query_arg($cancel_args, WC()->api_request_url(get_class($this))),
                     'autoCommission' => $auto_commission,
-                    'registerCard' => (int) ( is_user_logged_in() && $register_card )
+                    'registerCard' => (int) (is_user_logged_in() && $register_card)
                 );
 
                 $money_in_web = $this->api->money_in_web_init($params);
 
                 // Save transaction ID to the order
-                WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? update_post_meta( $order_id, '_transaction_id', $money_in_web->ID ) : $order->set_transaction_id( $money_in_web->ID );
+                WC_LemonWay_Helper::is_wc_lt('3.0') ? update_post_meta($order_id, '_transaction_id', $money_in_web->ID) : $order->set_transaction_id($money_in_web->ID);
 
                 //Save card ID
-                if ( is_user_logged_in() && $register_card ) {
-                    update_user_meta( get_current_user_id(), '_lw_card_id', $money_in_web->CARD->ID );
-                    update_post_meta( $order_id, '_register_card', true );
+                if (is_user_logged_in() && $register_card) {
+                    update_user_meta(get_current_user_id(), '_lw_card_id', $money_in_web->CARD->ID);
+                    update_post_meta($order_id, '_register_card', true);
                 }
 
                 // Save order information into DB
@@ -337,11 +340,11 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
                 return array(
                     'result' => 'success',
-                    'redirect' => esc_url_raw( $redirect_url )
+                    'redirect' => esc_url_raw($redirect_url)
                 );
             } else {
                 // MoneyInWithCardId
-                $card_id = get_user_meta( get_current_user_id(), '_lw_card_id', true );
+                $card_id = get_user_meta(get_current_user_id(), '_lw_card_id', true);
 
                 // Params for MoneyInWithCardId
                 $params = array(
@@ -357,22 +360,22 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
                 if ($hpay->INT_STATUS == 0) {
                     // Status 0 means success
-                    $order->payment_complete( $hpay->ID );
+                    $order->payment_complete($hpay->ID);
 
                     return array(
                         'result' => 'success',
-                        'redirect' => $this->get_return_url( $order )
+                        'redirect' => $this->get_return_url($order)
                     );
                 } else {
-                    throw new WC_LemonWay_Exception( $hpay->INT_MSG, '', $order_id );
+                    throw new WC_LemonWay_Exception($hpay->INT_MSG, '', $order_id);
                 }
             }
         } catch (WC_LemonWay_Exception $e) {
-            WC_LemonWay_Logger::log( 'Error: ' . $e->getMessage() . ' (' . $e->getCode() . ')');
+            WC_LemonWay_Logger::log('Error: ' . $e->getMessage() . ' (' . $e->getCode() . ')');
 
             $localized_message = $e->getLocalizedMessage() . ' (' . $e->getCode() . ')';
-            $this->abort_order( $order, $localized_message );
-            wc_add_notice(  __( 'Payment error:', LEMONWAY_TEXT_DOMAIN ) . ' ' . $localized_message, 'error' );
+            $this->abort_order($order, $localized_message);
+            wc_add_notice(__('Payment error:', LEMONWAY_TEXT_DOMAIN) . ' ' . $localized_message, 'error');
 
             return array(
                 'result' => 'fail',
@@ -390,49 +393,49 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         WC_LemonWay_Logger::log('Callback ' . $_SERVER['REQUEST_METHOD'] . ': ' . print_r($_REQUEST, true));
 
         try {
-            if ( ! $this->is_get() && ! $this->is_post() ) {
-                throw new WC_LemonWay_Exception( 'HTTP method not allowed.',  __('HTTP method not allowed.', LEMONWAY_TEXT_DOMAIN), 405 );
+            if (! $this->is_get() && ! $this->is_post()) {
+                throw new WC_LemonWay_Exception('HTTP method not allowed.', __('HTTP method not allowed.', LEMONWAY_TEXT_DOMAIN), 405);
             }
 
-            if ( ! isset( $_REQUEST['response_wkToken'] ) || ! isset( $_REQUEST['order_id'] ) || ! isset( $_REQUEST['customer_id'] ) ) {
-                throw new WC_LemonWay_Exception( 'Bad request: Missing response_wkToken, order_id or customer_id.', __('Bad request.', LEMONWAY_TEXT_DOMAIN) );
+            if (! isset($_REQUEST['response_wkToken']) || ! isset($_REQUEST['order_id']) || ! isset($_REQUEST['customer_id'])) {
+                throw new WC_LemonWay_Exception('Bad request: Missing response_wkToken, order_id or customer_id.', __('Bad request.', LEMONWAY_TEXT_DOMAIN));
             }
 
-            $wk_token = wc_clean( $_REQUEST['response_wkToken'] );
+            $wk_token = wc_clean($_REQUEST['response_wkToken']);
             // TODO: get order by meta value _wk_token
-            $order_id = wc_clean( $_REQUEST['order_id'] );
+            $order_id = wc_clean($_REQUEST['order_id']);
 
-            $order = wc_get_order( $order_id );
+            $order = wc_get_order($order_id);
 
-            if ( ! $order ) {
-                throw new WC_LemonWay_Exception( 'Order not found.', __('Order not found.', LEMONWAY_TEXT_DOMAIN), $order_id );
+            if (! $order) {
+                throw new WC_LemonWay_Exception('Order not found.', __('Order not found.', LEMONWAY_TEXT_DOMAIN), $order_id);
             }
             // Order found, from now we have to fail it in case of error
 
-            $customer_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? $order->customer_user : $order->get_customer_id();
+            $customer_id = WC_LemonWay_Helper::is_wc_lt('3.0') ? $order->customer_user : $order->get_customer_id();
 
-            if ( wc_clean( $_REQUEST['customer_id'] ) != $customer_id ) {
+            if (wc_clean($_REQUEST['customer_id']) != $customer_id) {
                 $this->abort_order($order, __('Bad request: Customer ID doesn\'t match.', LEMONWAY_TEXT_DOMAIN));
-                throw new WC_LemonWay_Exception( 'Bad request: Customer ID doesn\'t match.', __('Bad request.', LEMONWAY_TEXT_DOMAIN), $order_id );
+                throw new WC_LemonWay_Exception('Bad request: Customer ID doesn\'t match.', __('Bad request.', LEMONWAY_TEXT_DOMAIN), $order_id);
             }
 
             // Check IPN
-            if ( $this->is_post() ) {
-                if ( ! isset( $_POST['response_code'] ) || ! isset( $_POST['response_msg'] ) ) {
+            if ($this->is_post()) {
+                if (! isset($_POST['response_code']) || ! isset($_POST['response_msg'])) {
                     $this->abort_order($order, __('Bad IPN: POST missing response_code or response_msg.', LEMONWAY_TEXT_DOMAIN));
-                    throw new WC_LemonWay_Exception( 'Bad IPN: POST missing response_code or response_msg.', '', $order_id  );
+                    throw new WC_LemonWay_Exception('Bad IPN: POST missing response_code or response_msg.', '', $order_id);
                 }
 
-                $response_code = wc_clean( $_POST['response_code'] );
-                $response_msg = wc_clean( $_POST['response_msg'] );
+                $response_code = wc_clean($_POST['response_code']);
+                $response_msg = wc_clean($_POST['response_msg']);
             }
 
             // Get transaction ID for GetMoneyInTransDetails
-            $transaction_id = WC_LemonWay_Helper::is_wc_lt( '3.0' ) ? get_post_meta( $order_id, '_transaction_id', true ) : $order->get_transaction_id();
+            $transaction_id = WC_LemonWay_Helper::is_wc_lt('3.0') ? get_post_meta($order_id, '_transaction_id', true) : $order->get_transaction_id();
 
-            if ( ! $transaction_id ) {
+            if (! $transaction_id) {
                 $this->abort_order($order, __('Transaction not found.', LEMONWAY_TEXT_DOMAIN));
-                throw new WC_LemonWay_Exception( 'Transaction not found.', __('Transaction not found.', LEMONWAY_TEXT_DOMAIN), $order_id );
+                throw new WC_LemonWay_Exception('Transaction not found.', __('Transaction not found.', LEMONWAY_TEXT_DOMAIN), $order_id);
             }
 
             // GetMoneyInTransDetails
@@ -441,50 +444,50 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 'transactionMerchantToken' => $wk_token
             );
 
-            $hpay = $this->api->get_money_in_trans_details( $params );
+            $hpay = $this->api->get_money_in_trans_details($params);
 
             // Error message
             $error_msg = $hpay->INT_MSG;
-            if ( ! empty( $response_msg ) ) {
+            if (! empty($response_msg)) {
                 $error_msg .= ' (' . $response_msg . ')';
             }
 
             // Register card
-            $register_card = get_post_meta( $order_id, '_register_card', true );
+            $register_card = get_post_meta($order_id, '_register_card', true);
 
-            if ( $register_card ) {
-                update_user_meta( $customer_id, '_lw_card_num', isset($hpay->EXTRA->NUM) ? $hpay->EXTRA->NUM : '' );
-                update_user_meta( $customer_id, '_lw_card_exp', isset($hpay->EXTRA->EXP) ? $hpay->EXTRA->EXP : '' );
-                update_user_meta( $customer_id, '_lw_card_typ', isset($hpay->EXTRA->TYP) ? $hpay->EXTRA->TYP : '' );
+            if ($register_card) {
+                update_user_meta($customer_id, '_lw_card_num', isset($hpay->EXTRA->NUM) ? $hpay->EXTRA->NUM : '');
+                update_user_meta($customer_id, '_lw_card_exp', isset($hpay->EXTRA->EXP) ? $hpay->EXTRA->EXP : '');
+                update_user_meta($customer_id, '_lw_card_typ', isset($hpay->EXTRA->TYP) ? $hpay->EXTRA->TYP : '');
             }
 
-            $action = wc_clean( $_REQUEST['action'] );
+            $action = wc_clean($_REQUEST['action']);
 
             switch ($action) {
                 case 'return':
-                    if ( $this->is_post() && '0000' !== $response_code ) {
+                    if ($this->is_post() && '0000' !== $response_code) {
                         // 0000 means success
-                        if ( '2002' === $response_code ) {
+                        if ('2002' === $response_code) {
                             // Operation canceled by user
-                            wp_safe_redirect( $order->get_cancel_order_url() );
+                            wp_safe_redirect($order->get_cancel_order_url());
                             exit;
                         } else {
                             // Error
-                            $this->abort_order( $order, $error_msg );
-                            throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
+                            $this->abort_order($order, $error_msg);
+                            throw new WC_LemonWay_Exception($error_msg, '', $order_id);
                         }
                     }
 
-                    switch ( $hpay->INT_STATUS ) {
+                    switch ($hpay->INT_STATUS) {
                         case 0:
                             // Success
                             // add_post_meta unique => prevent double validation
-                            if ( add_post_meta( $order_id, '_' . $wk_token . '_is_validated', true, true ) ) {
-                                $order->payment_complete( $transaction_id );
+                            if (add_post_meta($order_id, '_' . $wk_token . '_is_validated', true, true)) {
+                                $order->payment_complete($transaction_id);
                             }
                             
-                            if ( $this->is_get() ) {
-                                wp_safe_redirect( $this->get_return_url( $order ) );
+                            if ($this->is_get()) {
+                                wp_safe_redirect($this->get_return_url($order));
                                 exit;
                             }
                             break;
@@ -492,39 +495,38 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                         case 6:
                             // Error
                             $this->abort_order($order, $error_msg);
-                            throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
+                            throw new WC_LemonWay_Exception($error_msg, '', $order_id);
                             break;
 
                         default:
-                            throw new WC_LemonWay_Exception( 'Payment pending.', __('Payment pending.', LEMONWAY_TEXT_DOMAIN), $order_id );
+                            throw new WC_LemonWay_Exception('Payment pending.', __('Payment pending.', LEMONWAY_TEXT_DOMAIN), $order_id);
                             break;
                     }
                     break;
                 
                 case 'error':
                     $this->abort_order($order, $error_msg);
-                    throw new WC_LemonWay_Exception( $error_msg, '', $order_id );
+                    throw new WC_LemonWay_Exception($error_msg, '', $order_id);
                     break;
 
                 case 'cancel':
-                    wp_safe_redirect( $order->get_cancel_order_url() );
+                    wp_safe_redirect($order->get_cancel_order_url());
                     exit;
                     break;
 
                 default:
-                    throw new WC_LemonWay_Exception( 'Bad request: Unknown action.', __('Bad request.', LEMONWAY_TEXT_DOMAIN), $order_id );
+                    throw new WC_LemonWay_Exception('Bad request: Unknown action.', __('Bad request.', LEMONWAY_TEXT_DOMAIN), $order_id);
                     break;
             }
-
         } catch (WC_LemonWay_Exception $e) {
-            WC_LemonWay_Logger::log( $_SERVER['REQUEST_METHOD'] . ' - Error: ' . $e->getMessage() . ' (' . $e->getCode() . ')');
+            WC_LemonWay_Logger::log($_SERVER['REQUEST_METHOD'] . ' - Error: ' . $e->getMessage() . ' (' . $e->getCode() . ')');
 
             // If it's not IPN, display error to user
-            if ( $this->is_get() ) {
-                wc_add_notice(  __('Payment error:', LEMONWAY_TEXT_DOMAIN) . ' ' . $e->getLocalizedMessage() . ' (' . $e->getCode() . ')', 'error' );
-                wp_safe_redirect( wc_get_cart_url() );
+            if ($this->is_get()) {
+                wc_add_notice(__('Payment error:', LEMONWAY_TEXT_DOMAIN) . ' ' . $e->getLocalizedMessage() . ' (' . $e->getCode() . ')', 'error');
+                wp_safe_redirect(wc_get_cart_url());
                 exit;
-            }  
+            }
         }
     }
 }

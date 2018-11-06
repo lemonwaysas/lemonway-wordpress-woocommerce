@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -15,7 +15,8 @@ class WC_LemonWay_Helper
      * @param string $version Version to check against.
      * @return bool
      */
-    public static function is_wc_lt( $version ) {
-        return version_compare( WC_VERSION, $version, '<' );
+    public static function is_wc_lt($version)
+    {
+        return version_compare(WC_VERSION, $version, '<');
     }
 }

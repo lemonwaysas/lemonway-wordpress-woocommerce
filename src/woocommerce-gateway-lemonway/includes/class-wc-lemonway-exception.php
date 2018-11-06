@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -15,14 +15,15 @@ class WC_LemonWay_Exception extends Exception
      * @param string $error_code Error code
      * @param string $localized_message Localized error message
      */
-    public function __construct( $error_message = '', $localized_message = '' , $error_code = 0) {
-        if ( !empty( $localized_message ) ) {
+    public function __construct($error_message = '', $localized_message = '', $error_code = 0)
+    {
+        if (!empty($localized_message)) {
             $this->localized_message = $localized_message;
         } else {
             $this->localized_message = $error_message;
         }
         
-        parent::__construct( $error_message, $error_code );
+        parent::__construct($error_message, $error_code);
     }
 
     /**
@@ -30,7 +31,8 @@ class WC_LemonWay_Exception extends Exception
      *
      * @return string
      */
-    public function getLocalizedMessage() {
+    public function getLocalizedMessage()
+    {
         return $this->localized_message;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -119,25 +119,28 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
      *
      * @param string $warning Warning message.
      */
-    protected function add_warning( $warning ) {
+    protected function add_warning($warning)
+    {
         $this->warnings[] = $warning;
     }
 
     /**
      * Get admin warning messages.
      */
-    protected function get_warnings() {
+    protected function get_warnings()
+    {
         return $this->warnings;
     }
 
     /**
      * Display admin warning messages.
      */
-    protected function display_warnings() {
-        if ( $this->get_warnings() ) {
+    protected function display_warnings()
+    {
+        if ($this->get_warnings()) {
             echo '<div id="woocommerce_warnings" class="notice-warning notice is-dismissible">';
-            foreach ( $this->get_warnings() as $warning ) {
-                echo '<p>' . wp_kses_post( $warning ) . '</p>';
+            foreach ($this->get_warnings() as $warning) {
+                echo '<p>' . wp_kses_post($warning) . '</p>';
             }
             echo '</div>';
         }
@@ -147,25 +150,25 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
      * Load API settings
      */
     protected function load_api_settings()
-    {   
+    {
         // Load main settings
         $settings_field_key = $this->get_option_key();
-        $main_settings = get_option( $settings_field_key );
+        $main_settings = get_option($settings_field_key);
 
-        $this->wlLogin = ! empty( $main_settings['wlLogin'] ) ? $main_settings['wlLogin'] : '';
-        $this->wlPass = ! empty( $main_settings['wlPass'] ) ? $main_settings['wlPass'] : '';
-        $this->test_mode = ( ! empty( $main_settings['test_mode'] ) && 'yes' === $main_settings['test_mode'] ) ? true : false;
-        $this->env_name = ! empty( $main_settings['env_name'] ) ? $main_settings['env_name'] : '';
-        $this->wallet = ! empty( $main_settings['wallet'] ) ? $main_settings['wallet'] : '';
-        $this->directkit_url = ! empty( $main_settings['directkit_url'] ) ? $main_settings['directkit_url'] : '';
-        $this->webkit_url = ! empty( $main_settings['webkit_url'] ) ? $main_settings['webkit_url'] : '';
+        $this->wlLogin = ! empty($main_settings['wlLogin']) ? $main_settings['wlLogin'] : '';
+        $this->wlPass = ! empty($main_settings['wlPass']) ? $main_settings['wlPass'] : '';
+        $this->test_mode = (! empty($main_settings['test_mode']) && 'yes' === $main_settings['test_mode']) ? true : false;
+        $this->env_name = ! empty($main_settings['env_name']) ? $main_settings['env_name'] : '';
+        $this->wallet = ! empty($main_settings['wallet']) ? $main_settings['wallet'] : '';
+        $this->directkit_url = ! empty($main_settings['directkit_url']) ? $main_settings['directkit_url'] : '';
+        $this->webkit_url = ! empty($main_settings['webkit_url']) ? $main_settings['webkit_url'] : '';
     }
 
     /**
      * Set up API
      */
     protected function set_up_api()
-    {   
+    {
         $settings = array(
             'directkit_url' => $this->directkit_url,
             'wlLogin' => $this->wlLogin,
@@ -190,8 +193,8 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         try {
             $wallet_details = $this->api->get_wallet_details($params);
         } catch (WC_LemonWay_Exception $e) {
-            if ( ! is_ajax() ) {
-                $this->add_error( $e->getLocalizedMessage() . ' (' . $e->getCode() . ')' );
+            if (! is_ajax()) {
+                $this->add_error($e->getLocalizedMessage() . ' (' . $e->getCode() . ')');
                 $this->display_errors();
             }
 
@@ -206,7 +209,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
      */
     protected function format_amount($amount)
     {
-        return number_format ( $amount , 2 , '.' , '' );
+        return number_format($amount, 2, '.', '');
     }
 
     /**
@@ -221,21 +224,21 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         $this->init_settings();
 
         // Get setting values.
-        $this->title = $this->get_option( 'title' );
-        $this->description = $this->get_option( 'description' );
+        $this->title = $this->get_option('title');
+        $this->description = $this->get_option('description');
 
         // Load API settings
         $this->load_api_settings();
 
-        if ( $this->test_mode ) {
+        if ($this->test_mode) {
             $this->title .= ' [TEST]';
-            $this->description = '[' . __( 'This is only a test payment.', LEMONWAY_TEXT_DOMAIN ) . ' <a href="' . __( 'https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN ) . '" target="_blank">' . __( 'Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN ) . '</a>' . ']' . "\n" . $this->description;
+            $this->description = '[' . __('This is only a test payment.', LEMONWAY_TEXT_DOMAIN) . ' <a href="' . __('https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN) . '</a>' . ']' . "\n" . $this->description;
         }
 
         // Set API language
-        $locale = substr( get_locale(), 0, 2 );
+        $locale = substr(get_locale(), 0, 2);
 
-        if ( array_key_exists( $locale, $this->supported_locales ) ) {
+        if (array_key_exists($locale, $this->supported_locales)) {
             $this->language = $this->supported_locales[$locale];
         } else {
             $this->language = 'en';
@@ -244,7 +247,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         // Set up API
         $this->set_up_api();
 
-        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+        add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ));
     }
 
     /**
