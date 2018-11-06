@@ -254,13 +254,13 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
      * @param  string $value Posted Value.
      * @return string
      */
-    public function validate_wlPass_field( $key, $value ) {
-        if ($value != $this->wlPass) {
+    /*public function validate_wlPass_field( $key, $value ) {
+        if ( $value !== $this->wlPass ) {
             $value = hash( 'sha256', $value );
         }
 
         return $this->validate_password_field( $key, $value );
-    }
+    }*/
 
     // @TODO: min/max amount
     // @TODO: admin_options

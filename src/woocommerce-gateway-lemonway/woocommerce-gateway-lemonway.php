@@ -24,7 +24,7 @@ define( 'LEMONWAY_TEXT_DOMAIN', 'woocommerce-gateway-lemonway' );
 define( 'LEMONWAY_MAIN_FILE', __FILE__ );
 
 //Add menu elements
-add_action('admin_menu', 'add_admin_menu');
+add_action( 'admin_menu', 'add_admin_menu' );
 add_action( 'plugins_loaded', 'init_lemonway_gateway_class' );
 
 function init_lemonway_gateway_class()
@@ -32,7 +32,7 @@ function init_lemonway_gateway_class()
     load_plugin_textdomain(LEMONWAY_TEXT_DOMAIN, false, plugin_basename( dirname( LEMONWAY_MAIN_FILE ) ) . '/languages' );
 
     if ( ! class_exists( 'WooCommerce' ) ) {
-        add_action('admin_notices', 'woocommerce_lemonway_missing_wc_notice');
+        add_action( 'admin_notices', 'woocommerce_lemonway_missing_wc_notice' );
         return false;
     }
 
@@ -73,9 +73,9 @@ function init_lemonway_gateway_class()
 
                 // @TODO: admin notices
 
-                add_filter('woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway_class'));
-                add_filter('plugin_action_links_' . plugin_basename( LEMONWAY_MAIN_FILE ), array( $this, 'plugin_action_links'));
-                add_filter('plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+                add_filter( 'woocommerce_payment_gateways', array( $this, 'add_lemonway_gateway_class' ) );
+                add_filter( 'plugin_action_links_' . plugin_basename( LEMONWAY_MAIN_FILE ), array( $this, 'plugin_action_links' ) );
+                add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
             }
 
             /**
@@ -86,7 +86,7 @@ function init_lemonway_gateway_class()
              */
             public static function get_instance()
             {
-                if (is_null(self::$instance)) {
+                if ( is_null( self::$instance ) ) {
                     self::$instance = new self();
                 }
                 
