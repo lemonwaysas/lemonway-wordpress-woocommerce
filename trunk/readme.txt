@@ -11,7 +11,7 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
 
 == Description ==
-[video src=\"https://youtu.be/9VRTT7QOVrY\"]
+https://www.youtube.com/watch?v=9VRTT7QOVrY
 ### Benefits for the E-merchant 
 
 #### Secured payments :
@@ -54,7 +54,8 @@ In the search field type \"WooCommerce LemonWay Payment Gateway\" and click Sear
 The manual installation method involves downloading our plugin and uploading it to your web server via your favorite FTP application. The WordPress codex contains [instructions on how to do this here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
 
 == Frequently Asked Questions ==
-https://support.lemonway.com/hc/en-us/sections/115001618929-WooCommerce
+[LemonWay support center](https://support.lemonway.com/hc/en-us/sections/115001618929-WooCommerce "LemonWay support center")
+
 
 == Screenshots ==
 1. Configuration page
