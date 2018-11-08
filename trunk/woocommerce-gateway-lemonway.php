@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: WooCommerce LemonWay Gateway
+ * Plugin Name: WooCommerce Lemon Way Gateway
  * Plugin URI: https://www.lemonway.com/ecommerce/
  * Description: Secured payment solutions for Internet E-commerce. BackOffice management. Compliance. Regulatory reporting.
  * Version: 2.0.0
- * Author: LemonWay <it@lemonway.com>
+ * Author: Lemon Way <it@lemonway.com>
  * Author URI: https://www.lemonway.com/
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -109,7 +109,7 @@ function init_lemonway_gateway_class()
             }
 
             /**
-             * Add LemonWay gateways to WooCommerce
+             * Add Lemon Way gateways to WooCommerce
              *
              */
             public function add_lemonway_gateway_class($methods)
@@ -129,7 +129,7 @@ function init_lemonway_gateway_class()
             public function plugin_action_links($links)
             {
                 $action_links = array(
-                    'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=lemonway') . '" aria-label="' . esc_attr__('View LemonWay settings', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Settings', LEMONWAY_TEXT_DOMAIN) . '</a>',
+                    'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=lemonway') . '" aria-label="' . esc_attr__('View Lemon Way settings', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Settings', LEMONWAY_TEXT_DOMAIN) . '</a>',
                 );
 
                 return array_merge($action_links, $links);
@@ -146,9 +146,9 @@ function init_lemonway_gateway_class()
             {
                 if (plugin_basename(LEMONWAY_MAIN_FILE) === $file) {
                     $row_meta = array(
-                        'docs' => '<a href="' . esc_url(__('https://lemonway.zendesk.com/hc/en-gb/categories/201471749-WooCommerce', LEMONWAY_TEXT_DOMAIN)) . '" aria-label="' . esc_attr__('View LemonWay documentation', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Docs', LEMONWAY_TEXT_DOMAIN) . '</a>',
-                        'apidocs' => '<a href="' . esc_url(__('http://documentation.lemonway.fr/ecommerce-en/', LEMONWAY_TEXT_DOMAIN)) . '" aria-label="' . esc_attr__('View LemonWay API docs', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('API docs', LEMONWAY_TEXT_DOMAIN) . '</a>',
-                        'support' => '<a href="' . esc_url('https://support.lemonway.com/') . '" aria-label="' . esc_attr__('Visit LemonWay customer support', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Support', LEMONWAY_TEXT_DOMAIN) . '</a>',
+                        'docs' => '<a href="' . esc_url(__('https://lemonway.zendesk.com/hc/en-gb/categories/201471749-WooCommerce', LEMONWAY_TEXT_DOMAIN)) . '" aria-label="' . esc_attr__('View Lemon Way documentation', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Docs', LEMONWAY_TEXT_DOMAIN) . '</a>',
+                        'apidocs' => '<a href="' . esc_url(__('http://documentation.lemonway.fr/ecommerce-en/', LEMONWAY_TEXT_DOMAIN)) . '" aria-label="' . esc_attr__('View Lemon Way API docs', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('API docs', LEMONWAY_TEXT_DOMAIN) . '</a>',
+                        'support' => '<a href="' . esc_url('https://support.lemonway.com/') . '" aria-label="' . esc_attr__('Visit Lemon Way customer support', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Support', LEMONWAY_TEXT_DOMAIN) . '</a>',
                         'signup' => '<a href="' . esc_url('https://www.lemonway.com/ecommerce/') . '" aria-label="' . esc_attr__('Sign up', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Sign up', LEMONWAY_TEXT_DOMAIN) . '</a>',
                         'signin' => '<a href="' . esc_url('https://ecommerce.lemonway.com') . '" aria-label="' . esc_attr__('Sign in', LEMONWAY_TEXT_DOMAIN) . '">' . esc_html__('Sign in', LEMONWAY_TEXT_DOMAIN) . '</a>'
                     );
@@ -170,15 +170,15 @@ function init_lemonway_gateway_class()
  */
 function woocommerce_lemonway_missing_wc_notice()
 {
-    echo '<div class="error"><p><strong>' . sprintf(__('LemonWay requires <a href="%s" target="_blank">WooCommerce to be installed and active</a>.', LEMONWAY_TEXT_DOMAIN), admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce')) . '</strong></p></div>';
+    echo '<div class="error"><p><strong>' . sprintf(__('WooCommerce Lemon Way Payment Gateway requires <a href="%s" target="_blank">WooCommerce to be installed and active</a>.', LEMONWAY_TEXT_DOMAIN), admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce')) . '</strong></p></div>';
 }
 
 /**
- * Add menu LemonWay
+ * Add menu Lemon Way
  */
 function add_admin_menu()
 {
-    add_menu_page('LemonWay', 'LemonWay', 'manage_product_terms', 'lemonway', 'redirect_configuration_page', plugins_url('assets/images/icon.png', LEMONWAY_MAIN_FILE), null);
+    add_menu_page('Lemon Way', 'Lemon Way', 'manage_product_terms', 'lemonway', 'redirect_configuration_page', plugins_url('assets/images/icon.png', LEMONWAY_MAIN_FILE), null);
 }
 
 function redirect_configuration_page()

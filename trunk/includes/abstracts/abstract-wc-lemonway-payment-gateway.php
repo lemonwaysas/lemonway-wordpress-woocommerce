@@ -4,7 +4,7 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Abstract class that will be inherited by all LemonWay payment methods
+ * Abstract class that will be inherited by all Lemon Way payment methods
  *
  * @extends WC_Payment_Gateway
  *
@@ -19,14 +19,14 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     const LW4E_WEBKIT_URL_PROD = 'https://webkit.lemonway.fr/mb/lwecommerce/prod';
     const LW4E_WEBKIT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/lwecommerce/dev';
 
-    // LW Entreprise
+    // LW Enterprise
     const LEMONWAY_DIRECTKIT_FORMAT_URL_PROD = 'https://ws.lemonway.fr/mb/%s/prod/directkitjson2/service.asmx';
     const LEMONWAY_DIRECTKIT_FORMAT_URL_TEST = 'https://sandbox-api.lemonway.fr/mb/%s/dev/directkitjson2/service.asmx';
     const LEMONWAY_WEBKIT_FORMAT_URL_PROD = 'https://webkit.lemonway.fr/mb/%s/prod';
     const LEMONWAY_WEBKIT_FORMAT_URL_TEST = 'https://sandbox-webkit.lemonway.fr/%s/dev';
 
     /**
-     * List of locales supported by LemonWay.
+     * List of locales supported by Lemon Way.
      *
      * @var array
      */
@@ -87,7 +87,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     protected $test_mode = false;
 
     /**
-     * Name of LemonWay environment
+     * Name of Lemon Way environment
      *
      * @var string
      */

@@ -26,7 +26,7 @@ class WC_LemonWay_Logger
             }
         }
 
-        $log_entry = ' - LemonWay v' . LEMONWAY_VERSION . "\n";
+        $log_entry = ' - WooCommerce Lemon Way Payment Gateway v' . LEMONWAY_VERSION . "\n";
         $log_entry .= $message . "\n";
 
         if (WC_LemonWay_Helper::is_wc_lt('3.0')) {

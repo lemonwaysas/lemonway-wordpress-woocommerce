@@ -205,7 +205,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 $this->webkit_url = self::LW4E_WEBKIT_URL_TEST;
             }
         } else {
-            // If LW Entreprise
+            // If LW Enterprise
             if (!$this->test_mode) {
                 // If live mode
                 $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_PROD, $this->env_name);
@@ -260,7 +260,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
 
             $amount = $order->get_total();
 
-            // LW Entreprise => autocom
+            // LW Enterprise => autocom
             $auto_commission = empty($this->env_name) ? 0 : 1;
 
             // One-click

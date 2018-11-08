@@ -4,13 +4,13 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Settings for LemonWay Gateway.
+ * Settings for Lemon Way Gateway.
  */
 return array(
     'enabled' => array(
         'title' => __('Enable/Disable', 'woocommerce'),
         'type' => 'checkbox',
-        'label'   => __('Enable LemonWay', LEMONWAY_TEXT_DOMAIN),
+        'label'   => __('Enable Lemon Way', LEMONWAY_TEXT_DOMAIN),
         'default' => 'yes'
     ),
     'title' => array(
@@ -78,15 +78,15 @@ return array(
         'description' =>  '<a href="' . __('https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN) . '</a>',
         'default' => 'no'
     ),
-    'lw_entreprise' => array(
-        'title' => '<hr /><span class="dashicons dashicons-businessman"></span> LemonWay Entreprise',
+    'lw_enterprise' => array(
+        'title' => '<hr /><span class="dashicons dashicons-businessman"></span> LemonWay Enterprise',
         'type' => 'title',
-        'description' => __('Settings for LemonWay Entreprise partners only', LEMONWAY_TEXT_DOMAIN)
+        'description' => __('Settings for Lemon Way Enterprise partners only', LEMONWAY_TEXT_DOMAIN)
     ),
     'env_name' => array(
         'title' => __('Environment name', LEMONWAY_TEXT_DOMAIN),
         'type' => 'text',
-        'description' => __('Name of your LemonWay environment', LEMONWAY_TEXT_DOMAIN),
+        'description' => __('Name of your Lemon Way environment', LEMONWAY_TEXT_DOMAIN),
         'desc_tip' => true
     ),
     'tpl_name' => array(

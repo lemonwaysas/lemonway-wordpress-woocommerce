@@ -6,7 +6,7 @@ if (! defined('ABSPATH')) {
 /**
  * WC_LemonWay_API class.
  *
- * Communicate with LemonWay API.
+ * Communicate with Lemon Way API.
  */
 class WC_LemonWay_API
 {
@@ -40,7 +40,7 @@ class WC_LemonWay_API
         $url = $this->directkit_url . '/' . $methodName;
 
         // User-agent
-        $ua = 'LemonWay Woocommerce v' . LEMONWAY_VERSION;
+        $ua = 'WooCommerce Lemon Way Payment Gateway v' . LEMONWAY_VERSION;
         $ua .= (isset($_SERVER['HTTP_USER_AGENT'])) ? '/' . $_SERVER['HTTP_USER_AGENT'] : '';
 
         // IP
@@ -89,11 +89,11 @@ class WC_LemonWay_API
 
         if (is_wp_error($response) || empty($response['body'])) {
             // WP Error
-            throw new WC_LemonWay_Exception('There was a problem connecting to the LemonWay API (WP Error: ' . print_r($response, true) . ')', __('There was a problem connecting to the LemonWay API.', LEMONWAY_TEXT_DOMAIN));
+            throw new WC_LemonWay_Exception('There was a problem connecting to the Lemon Way API (WP Error: ' . print_r($response, true) . ')', __('There was a problem connecting to the Lemon Way API.', LEMONWAY_TEXT_DOMAIN));
         }
 
         if (wp_remote_retrieve_response_code($response) != 200) {
-            throw new WC_LemonWay_Exception('There was a problem connecting to the LemonWay API (HTTP error: ' . wp_remote_retrieve_response_message($response) . ')', __('There was a problem connecting to the LemonWay API:', LEMONWAY_TEXT_DOMAIN) . ' ' . wp_remote_retrieve_response_message($response), wp_remote_retrieve_response_code($response));
+            throw new WC_LemonWay_Exception('There was a problem connecting to the Lemon Way API (HTTP error: ' . wp_remote_retrieve_response_message($response) . ')', __('There was a problem connecting to the Lemon Way API:', LEMONWAY_TEXT_DOMAIN) . ' ' . wp_remote_retrieve_response_message($response), wp_remote_retrieve_response_code($response));
         }
 
         WC_LemonWay_Logger::log('Response: ' . $response['body']);
@@ -102,7 +102,7 @@ class WC_LemonWay_API
         $parsedResponse = json_decode($response['body']);
         
         if (isset($parsedResponse->d->E)) {
-            // LemonWay error
+            // Lemon Way error
             throw new WC_LemonWay_Exception($parsedResponse->d->E->Msg, '', $parsedResponse->d->E->Code);
         }
          
