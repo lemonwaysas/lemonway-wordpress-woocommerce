@@ -75,7 +75,7 @@ return array(
         'title' => __('Test mode', LEMONWAY_TEXT_DOMAIN),
         'type' => 'checkbox',
         'label' => __('Enable test mode', LEMONWAY_TEXT_DOMAIN),
-        'description' =>  '<a href="' . __('https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Click here to see how to use Test mode.', LEMONWAY_TEXT_DOMAIN) . '</a>',
+        'description' =>  '<a href="' . __('https://lemonway.zendesk.com/hc/en-gb/articles/212557765-2-How-do-I-test-with-the-WooCommerce-module-', LEMONWAY_TEXT_DOMAIN) . '" target="_blank">' . __('Click here to see how to use Test mode', LEMONWAY_TEXT_DOMAIN) . '</a>',
         'default' => 'no'
     ),
     'lw_enterprise' => array(

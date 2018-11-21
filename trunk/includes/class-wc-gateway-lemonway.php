@@ -153,8 +153,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         // Set up API
         $this->set_up_api();
 
-        return ! $this->test_api();
         // Needs setup if test API doesn't pass
+        return ! $this->test_api();
     }
 
     /**
@@ -192,6 +192,9 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
         // Load new settings
         $this->load_api_settings();
 
+        // Set up API
+        $this->set_up_api();
+
         // Generate API endpoints
         if (empty($this->env_name)) {
             // If LW4E
@@ -204,6 +207,19 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 $this->directkit_url = self::LW4E_DIRECTKIT_URL_TEST;
                 $this->webkit_url = self::LW4E_WEBKIT_URL_TEST;
             }
+
+            // Params for GetPassHash
+            $params = array(
+                'wallet' => $this->wallet
+            );
+
+            try {
+                $this->update_option( 'wlPassHash', $this->api->get_pass_hash( $params ) );
+                $this->update_option( 'wlPass', '' );
+            } catch (WC_LemonWay_Exception $e) {
+                $this->add_error($e->getLocalizedMessage() . ' (' . $e->getCode() . ')');
+                $this->display_errors();
+            }
         } else {
             // If LW Enterprise
             if (!$this->test_mode) {
@@ -215,6 +231,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 $this->directkit_url = sprintf(self::LEMONWAY_DIRECTKIT_FORMAT_URL_TEST, $this->env_name);
                 $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name);
             }
+
+            $this->update_option( 'wlPassHash', '' );
         }
 
         // Save into DB

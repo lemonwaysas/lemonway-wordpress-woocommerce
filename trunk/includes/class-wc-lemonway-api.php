@@ -29,6 +29,12 @@ class WC_LemonWay_API
     private $wlPass = '';
 
     /**
+     * API hashed password
+     * @var string
+     */
+    private $wlPassHash = '';
+
+    /**
      * API language
      * @var string
      */
@@ -62,6 +68,7 @@ class WC_LemonWay_API
             'version' => '10.0',
             'walletIp' => $ip,
             'walletUa' => $ua,
+            'wlPassHash' => $this->wlPassHash
         );
 
         $requestParams = array_merge($baseParams, $params);
@@ -85,6 +92,7 @@ class WC_LemonWay_API
 
         // Log
         $requestParams['p']['wlPass'] = '*masked*';
+        $requestParams['p']['wlPassHash'] = '*masked*';
         WC_LemonWay_Logger::log($url . "\n" . 'Request: ' . json_encode($requestParams));
 
         if (is_wp_error($response) || empty($response['body'])) {
@@ -119,10 +127,19 @@ class WC_LemonWay_API
         $this->directkit_url = $settings['directkit_url'];
         $this->wlLogin = $settings['wlLogin'];
         $this->wlPass = $settings['wlPass'];
+        $this->wlPassHash = $settings['wlPassHash'];
         $this->language = $settings['language'];
     }
 
     // API methods
+
+    /**
+     * Get details of a wallet
+     *
+     * @param array API parameters
+     *
+     * @return Object Wallet
+     */
     public function get_wallet_details($params)
     {
         $response = $this->request('GetWalletDetails', $params);
@@ -130,6 +147,13 @@ class WC_LemonWay_API
         return $response->WALLET;
     }
 
+    /**
+     * Generate a money-in
+     *
+     * @param array API parameters
+     *
+     * @return Object MoneyInWeb result
+     */
     public function money_in_web_init($params)
     {
         $response = $this->request('MoneyInWebInit', $params);
@@ -137,6 +161,13 @@ class WC_LemonWay_API
         return $response->MONEYINWEB;
     }
 
+    /**
+     * Money-in with a card token
+     *
+     * @param array API parameters
+     *
+     * @return Object Operation
+     */
     public function money_in_with_card_id($params)
     {
         $response = $this->request('MoneyInWithCardId', $params);
@@ -144,10 +175,32 @@ class WC_LemonWay_API
         return $response->TRANS->HPAY;
     }
 
+    /**
+     * Get details of a money-in
+     *
+     * @param array API parameters
+     *
+     * @return Object Operation
+     */
     public function get_money_in_trans_details($params)
     {
         $response = $this->request('GetMoneyInTransDetails', $params);
 
         return $response->TRANS->HPAY[0];
+    }
+
+    /**
+     * Get hased password
+     *
+     * @since 2.1.0
+     * @param array API parameters
+     *
+     * @return string Hashed password
+     */
+    public function get_pass_hash( $params )
+    {
+        $response = $this->request( 'GetPassHash', $params );
+
+        return $response->GETPASSHASH->PASS;
     }
 }

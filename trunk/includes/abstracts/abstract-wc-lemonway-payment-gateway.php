@@ -80,6 +80,13 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
     protected $wlPass;
 
     /**
+     * API hashed password
+     *
+     * @var string
+     */
+    protected $wlPassHash;
+
+    /**
      * Is test mode active?
      *
      * @var bool
@@ -157,6 +164,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
 
         $this->wlLogin = ! empty($main_settings['wlLogin']) ? $main_settings['wlLogin'] : '';
         $this->wlPass = ! empty($main_settings['wlPass']) ? $main_settings['wlPass'] : '';
+        $this->wlPassHash = ! empty($main_settings['wlPassHash']) ? $main_settings['wlPassHash'] : '';
         $this->test_mode = (! empty($main_settings['test_mode']) && 'yes' === $main_settings['test_mode']) ? true : false;
         $this->env_name = ! empty($main_settings['env_name']) ? $main_settings['env_name'] : '';
         $this->wallet = ! empty($main_settings['wallet']) ? $main_settings['wallet'] : '';
@@ -173,6 +181,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
             'directkit_url' => $this->directkit_url,
             'wlLogin' => $this->wlLogin,
             'wlPass' => $this->wlPass,
+            'wlPassHash' => $this->wlPassHash,
             'language' => $this->language
         );
 
@@ -193,6 +202,7 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         try {
             $wallet_details = $this->api->get_wallet_details($params);
         } catch (WC_LemonWay_Exception $e) {
+            // needs_setup function is via AJAX
             if (! is_ajax()) {
                 $this->add_error($e->getLocalizedMessage() . ' (' . $e->getCode() . ')');
                 $this->display_errors();
@@ -249,21 +259,6 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ));
     }
-
-    /**
-     * Hash wlPass
-     *
-     * @param  string $key Field key.
-     * @param  string $value Posted Value.
-     * @return string
-     */
-    /*public function validate_wlPass_field( $key, $value ) {
-        if ( $value !== $this->wlPass ) {
-            $value = hash( 'sha256', $value );
-        }
-
-        return $this->validate_password_field( $key, $value );
-    }*/
 
     // @TODO: min/max amount
     // @TODO: admin_options

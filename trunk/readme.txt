@@ -4,7 +4,7 @@ Tags: payment, ecommerce, e-commerce, sales, checkout, wallet, secure, credit ca
 Requires at least: 2.6
 Tested up to: 4.9
 Requires PHP: 5.6
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
