@@ -214,8 +214,8 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
             );
 
             try {
-                $this->update_option( 'wlPassHash', $this->api->get_pass_hash( $params ) );
-                $this->update_option( 'wlPass', '' );
+                $this->update_option('wlPassHash', $this->api->get_pass_hash($params));
+                $this->update_option('wlPass', '');
             } catch (WC_LemonWay_Exception $e) {
                 $this->add_error($e->getLocalizedMessage() . ' (' . $e->getCode() . ')');
                 $this->display_errors();
@@ -232,7 +232,7 @@ class WC_Gateway_LemonWay extends WC_LemonWay_Payment_Gateway
                 $this->webkit_url = sprintf(self::LEMONWAY_WEBKIT_FORMAT_URL_TEST, $this->env_name);
             }
 
-            $this->update_option( 'wlPassHash', '' );
+            $this->update_option('wlPassHash', '');
         }
 
         // Save into DB

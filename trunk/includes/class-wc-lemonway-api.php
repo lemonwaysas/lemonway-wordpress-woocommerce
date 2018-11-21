@@ -197,9 +197,9 @@ class WC_LemonWay_API
      *
      * @return string Hashed password
      */
-    public function get_pass_hash( $params )
+    public function get_pass_hash($params)
     {
-        $response = $this->request( 'GetPassHash', $params );
+        $response = $this->request('GetPassHash', $params);
 
         return $response->GETPASSHASH->PASS;
     }

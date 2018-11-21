@@ -54,7 +54,7 @@ function init_lemonway_gateway_class()
              */
             private function __construct()
             {
-                add_action( 'upgrader_process_complete', 'upgrade', 10, 2);
+                add_action('upgrader_process_complete', 'upgrade', 10, 2);
                 add_action('admin_init', array( $this, 'install' ));
                 
                 require_once dirname(LEMONWAY_MAIN_FILE) . '/includes/class-wc-lemonway-exception.php';
@@ -124,7 +124,7 @@ function init_lemonway_gateway_class()
                     );
 
                     try {
-                        $main_settings['wlPassHash'] = $api->get_pass_hash( $params );
+                        $main_settings['wlPassHash'] = $api->get_pass_hash($params);
                         $main_settings['wlPass'] = '';
                     } catch (WC_LemonWay_Exception $e) {
                         WC_LemonWay_Logger::log('An error occurred while upgrading.');
@@ -133,7 +133,7 @@ function init_lemonway_gateway_class()
                     $main_settings['wlPassHash'] = '';
                 }
 
-                update_option( 'woocommerce_lemonway_settings', $main_settings , 'yes' );
+                update_option('woocommerce_lemonway_settings', $main_settings, 'yes');
 
                 WC_LemonWay_Logger::log('Upgraded!');
             }
