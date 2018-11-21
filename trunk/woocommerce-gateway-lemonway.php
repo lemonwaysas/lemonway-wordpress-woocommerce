@@ -41,10 +41,6 @@ function init_lemonway_gateway_class()
          * Constants
          */
         define('LEMONWAY_VERSION', '2.1.0');
-        // define( 'LEMONWAY_MIN_PHP_VERSION', '5.6.0' );
-        // define( 'LEMONWAY_MIN_WC_VERSION', '2.6.0' );
-        // define( 'LEMONWAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( LEMONWAY_MAIN_FILE ) ), basename( LEMONWAY_MAIN_FILE ) ) ) );
-        // define( 'LEMONWAY_PLUGIN_PATH', untrailingslashit( plugin_dir_path( LEMONWAY_MAIN_FILE ) ) );
 
         class LemonWay
         {

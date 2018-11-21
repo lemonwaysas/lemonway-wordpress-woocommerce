@@ -63,6 +63,9 @@ The manual installation method involves downloading our plugin and uploading it 
 3. Credit card form
 
 == Changelog ==
+= 2.1.0 =
+Add: Password hashing
+
 = 2.0.0 =
 Fix: Pending payment status
 Add: Feature for Lemon Way Enterprise
@@ -72,6 +75,9 @@ Add: Lemon Way Payment Gateway
 Add: One-click mode
 
 == Upgrade Notice ==
+= 2.1.0 =
+This version hash the saved password for LW4EC
+
 = 2.0.0 =
 This version fixes all the issues concerning the pending payment status.
 This version supports Lemon Way Enterprise.
