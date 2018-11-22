@@ -100,6 +100,8 @@ function init_lemonway_gateway_class()
                 WC_LemonWay_Logger::log('Upgrading...');
                 $gateway = new WC_Gateway_LemonWay();
                 $gateway->hash_password();
+                delete_option('woocommerce_woocommerce-gateway-lemonway_settings');
+                delete_option('wc_lemonway_version');
                 WC_LemonWay_Logger::log('Upgraded!');
             }
 
