@@ -98,43 +98,8 @@ function init_lemonway_gateway_class()
             public function upgrade()
             {
                 WC_LemonWay_Logger::log('Upgrading...');
-
-                $main_settings = get_option('woocommerce_lemonway_settings');
-                $directkit_url = ! empty($main_settings['directkit_url']) ? $main_settings['directkit_url'] : '';
-                $wlLogin = ! empty($main_settings['wlLogin']) ? $main_settings['wlLogin'] : '';
-                $wlPass = ! empty($main_settings['wlPass']) ? $main_settings['wlPass'] : '';
-
-                $settings = array(
-                    'directkit_url' => $directkit_url,
-                    'wlLogin' => $wlLogin,
-                    'wlPass' => $wlPass,
-                    'wlPassHash' => '',
-                    'language' => 'en'
-                );
-
-                $api = new WC_LemonWay_API($settings);
-
-                $env_name = ! empty($main_settings['env_name']) ? $main_settings['env_name'] : '';
-                $wallet = ! empty($main_settings['wallet']) ? $main_settings['wallet'] : '';
-
-                if (empty($env_name)) {
-                    // Params for GetPassHash
-                    $params = array(
-                        'wallet' => $wallet
-                    );
-
-                    try {
-                        $main_settings['wlPassHash'] = $api->get_pass_hash($params);
-                        $main_settings['wlPass'] = '';
-                    } catch (WC_LemonWay_Exception $e) {
-                        WC_LemonWay_Logger::log('An error occurred while upgrading.');
-                    }
-                } else {
-                    $main_settings['wlPassHash'] = '';
-                }
-
-                update_option('woocommerce_lemonway_settings', $main_settings, 'yes');
-
+                $gateway = new WC_Gateway_LemonWay();
+                $gateway->hash_password();
                 WC_LemonWay_Logger::log('Upgraded!');
             }
 

@@ -260,6 +260,34 @@ abstract class WC_LemonWay_Payment_Gateway extends WC_Payment_Gateway
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ));
     }
 
+    /**
+     * Hash wlPass
+     *
+     * @since 2.1.0
+     */
+    public function hash_password()
+    {
+        if (!empty($this->wlPass)) {
+            if (empty($this->env_name)) {
+                // Only hash password for LW4EC
+                // Params for GetPassHash
+                $params = array(
+                    'wallet' => $this->wallet
+                );
+
+                try {
+                    $this->update_option('wlPassHash', $this->api->get_pass_hash($params));
+                    $this->update_option('wlPass', '');
+                } catch (WC_LemonWay_Exception $e) {
+                    $this->add_error($e->getLocalizedMessage() . ' (' . $e->getCode() . ')');
+                    $this->display_errors();
+                }
+            } else {
+                $this->update_option('wlPassHash', '');
+            }
+        }
+    }
+
     // @TODO: min/max amount
     // @TODO: admin_options
     // @TODO: save payment method
